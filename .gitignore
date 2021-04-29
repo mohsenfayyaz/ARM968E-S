@@ -1,0 +1,8 @@
+
+arm_modelsim/work/
+
+*.mti
+
+*.mpf
+
+*.bak
