@@ -36,18 +36,18 @@ Mux # (1) mem_w_mux (.first(MEM_W_EN),.second(1'b0),.select(flush),.out(MEM_W_EN
 Mux # (1) mem_r_mux (.first(MEM_R_EN),.second(1'b0),.select(flush),.out(MEM_R_EN_mux_out));
 Mux # (1) wb_mux (.first(WB_EN),.second(1'b0),.select(flush),.out(WB_EN_mux_out));
 
-R_Register # (`ADDRESS_LEN) pc_register (.q(pc_out), .d(pc_mux_out), .clk(clk), .rst(rst));
-R_Register # (`ADDRESS_LEN) val_Rn_register (.q(val_Rn_out), .d(val_Rn_mux_out), .clk(clk), .rst(rst));
-R_Register # (`ADDRESS_LEN) val_Rm_register (.q(val_Rm_out), .d(val_Rm_mux_out), .clk(clk), .rst(rst));
-R_Register # (24) imm24_register (.q(signed_extend_immediate_out), .d(signed_immediate_mux_out), .clk(clk), .rst(rst));
-R_Register # (4) output_dst_register (.q(output_dst_out), .d(output_dst_mux_out), .clk(clk), .rst(rst));
-R_Register # (12) shift_operand_register (.q(shift_operand_out), .d(shift_operand_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) imm_register (.q(immediate_out), .d(imm_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) S_register (.q(S_out), .d(s_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) B_register (.q(B_out), .d(b_mux_out), .clk(clk), .rst(rst));
-R_Register # (4) EXE_CMD_register (.q(EXE_CMD_out), .d(EXE_CMD_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) MEM_W_EN_register (.q(MEM_W_EN_out), .d(MEM_W_EN_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) MEM_R_EN_register (.q(MEM_R_EN_out), .d(MEM_R_EN_mux_out), .clk(clk), .rst(rst));
-R_Register # (1) WB_EN_register (.q(WB_EN_out), .d(WB_EN_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (`ADDRESS_LEN) pc_register (.q(pc_out), .d(pc_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (`ADDRESS_LEN) val_Rn_register (.q(val_Rn_out), .d(val_Rn_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (`ADDRESS_LEN) val_Rm_register (.q(val_Rm_out), .d(val_Rm_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (24) imm24_register (.q(signed_extend_immediate_out), .d(signed_immediate_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (4) output_dst_register (.q(output_dst_out), .d(output_dst_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (12) shift_operand_register (.q(shift_operand_out), .d(shift_operand_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) imm_register (.q(immediate_out), .d(imm_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) S_register (.q(S_out), .d(s_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) B_register (.q(B_out), .d(b_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (4) EXE_CMD_register (.q(EXE_CMD_out), .d(EXE_CMD_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) MEM_W_EN_register (.q(MEM_W_EN_out), .d(MEM_W_EN_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) MEM_R_EN_register (.q(MEM_R_EN_out), .d(MEM_R_EN_mux_out), .clk(clk), .rst(rst));
+Regular_Register # (1) WB_EN_register (.q(WB_EN_out), .d(WB_EN_mux_out), .clk(clk), .rst(rst));
 
 endmodule
