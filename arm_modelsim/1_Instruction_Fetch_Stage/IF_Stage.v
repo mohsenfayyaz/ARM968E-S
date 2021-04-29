@@ -18,7 +18,7 @@ Mux #(`ADDRESS_LEN) pc_mux
     .out(pc)
 );
 
-Register pc_register
+Freezable_Register pc_register
 (
     .q(pc_out),
     .d(pc),

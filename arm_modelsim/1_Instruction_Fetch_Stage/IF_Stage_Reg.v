@@ -17,7 +17,7 @@ Mux # (`ADDRESS_LEN) pc_mux
     .select(flush),
     .out(pc)
 );
-Register pc_register
+Freezable_Register pc_register
 (
     .q(pc_out),
     .d(pc),
@@ -33,7 +33,7 @@ Mux # (`ADDRESS_LEN) instruction_mux
     .select(flush),
     .out(instruction)
 );
-Register instruction_register
+Freezable_Register instruction_register
 (
     .q(instruction_out),
     .d(instruction),

@@ -1,9 +1,12 @@
 `include "configs.v"
 
-module Register 
+module Freezable_Register 
+# (
+    parameter SIZE = `ADDRESS_LEN;
+)
 (
-    output reg [`ADDRESS_LEN - 1 : 0 ] q,
-    input [`ADDRESS_LEN - 1 : 0 ] d,
+    output reg [SIZE - 1 : 0 ] q,
+    input [SIZE - 1 : 0 ] d,
     input freeze,
     input clk,
     input rst
