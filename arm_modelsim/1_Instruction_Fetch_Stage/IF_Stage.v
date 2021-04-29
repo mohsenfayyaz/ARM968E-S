@@ -30,11 +30,11 @@ module IF_Stage(
   Instruction_Memory instruction_mem
   (
       .instruction(instruction_out),
-      .address(pc)
+      .address(pc_out)
   );
   
 
-  assign next_pc = pc + 4;
+  assign next_pc = pc_out + 4;
   
   
 endmodule
