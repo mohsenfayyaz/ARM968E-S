@@ -7,8 +7,8 @@ module IF_Stage(
 );
 
 
-wire [ADDRESS_SIZE - 1 : 0] pc;
-wire [ADDRESS_SIZE - 1 : 0] next_pc;
+wire [`ADDRESS_LEN - 1 : 0] pc;
+wire [`ADDRESS_LEN - 1 : 0] next_pc;
 
 Mux #(`ADDRESS_LEN) pc_mux
 (

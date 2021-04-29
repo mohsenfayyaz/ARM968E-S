@@ -2,7 +2,7 @@
 
 module Regular_Register 
 # (
-    parameter SIZE = `ADDRESS_LEN;
+    parameter SIZE = `ADDRESS_LEN
 )
 (
     output reg [SIZE - 1 : 0 ] q,
