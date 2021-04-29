@@ -7,34 +7,34 @@ module IF_Stage(
 );
 
 
-wire [`ADDRESS_LEN - 1 : 0] pc;
-wire [`ADDRESS_LEN - 1 : 0] next_pc;
+  wire [`ADDRESS_LEN - 1 : 0] pc;
+  wire [`ADDRESS_LEN - 1 : 0] next_pc;
 
-Mux #(`ADDRESS_LEN) pc_mux
-(
-    .first(next_pc),
-    .second(branch_address),
-    .select(branch_taken),
-    .out(pc)
-);
+  Mux #(`ADDRESS_LEN) pc_mux
+  (
+      .first(next_pc),
+      .second(branch_address),
+      .select(branch_taken),
+      .out(pc)
+  );
 
-Freezable_Register pc_register
-(
-    .q(pc_out),
-    .d(pc),
-    .freeze(freeze),
-    .clk(clk),
-    .rst(rst)
-);
+  Freezable_Register pc_register
+  (
+      .d(pc),
+      .q(pc_out),
+      .freeze(freeze),
+      .clk(clk),
+      .rst(rst)
+  );
 
-InstructionMemory instruction_mem
-(
-    .q(instruction_out),
-    .d(pc)
-);
+  Instruction_Memory instruction_mem
+  (
+      .instruction(instruction_out),
+      .address(pc)
+  );
   
 
-assign next_pc = pc + 4;
+  assign next_pc = pc + 4;
   
   
 endmodule
