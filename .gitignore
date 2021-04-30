@@ -6,3 +6,5 @@ arm_modelsim/work/
 *.mpf
 
 *.bak
+
+*.wlf
