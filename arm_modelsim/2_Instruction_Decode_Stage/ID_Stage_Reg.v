@@ -2,14 +2,15 @@
 
 module ID_Stage_Reg(
   input clk, rst,
-  input[`ADDRESS_LEN - 1:0] pc_in,
-  output reg[`ADDRESS_LEN - 1:0] pc,
+  input [`ADDRESS_LEN - 1:0] pc_in,
+  output [`ADDRESS_LEN - 1:0] pc,
   
   input S, B, MEM_W_EN, MEM_R_EN, WB_EN, imm,
   input [`ADDRESS_LEN - 1:0] Val_Rn, Val_Rm,
   input [23:0] Signed_imm_24,
   input [3:0] Dest, EXE_CMD, src1, src2,
-  input [11:0] Shift_operand, flush,
+  input [11:0] Shift_operand, 
+  input flush,
   
   output S_out, B_out, MEM_W_EN_out, MEM_R_EN_out, WB_EN_out, imm_out,
   output [`ADDRESS_LEN - 1:0] Val_Rn_out, Val_Rm_out,
@@ -24,7 +25,7 @@ module ID_Stage_Reg(
   wire [3:0] output_dst_mux_out, EXE_CMD_mux_out, src1_mux_out, src2_mux_out;
   wire imm_mux_out, s_mux_out, b_mux_out, MEM_W_EN_mux_out, MEM_R_EN_mux_out, WB_EN_mux_out;
 
-  Mux # (`ADDRESS_LEN) pc_mux (.first(pc),.second(32'b0),.select(flush),.out(pc_mux_out));
+  Mux # (`ADDRESS_LEN) pc_mux (.first(pc_in),.second(32'b0),.select(flush),.out(pc_mux_out));
   Mux # (`ADDRESS_LEN) val_Rn_mux (.first(Val_Rn),.second(32'b0),.select(flush),.out(val_Rn_mux_out));
   Mux # (`ADDRESS_LEN) val_Rm_mux (.first(Val_Rm),.second(32'b0),.select(flush),.out(val_Rm_mux_out));
   Mux # (24) imm24_mux (.first(Signed_imm_24),.second(24'b0),.select(flush),.out(signed_immediate_mux_out));
@@ -40,7 +41,7 @@ module ID_Stage_Reg(
   Mux # (4) src1_mux (.first(src1),.second(4'b0),.select(flush),.out(src1_mux_out));
   Mux # (4) src2_mux (.first(src2),.second(4'b0),.select(flush),.out(src2_mux_out));
 
-  Regular_Register # (`ADDRESS_LEN) pc_register (.q(pc_out), .d(pc_mux_out), .clk(clk), .rst(rst));
+  Regular_Register # (`ADDRESS_LEN) pc_register (.q(pc), .d(pc_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (`ADDRESS_LEN) val_Rn_register (.q(Val_Rn_out), .d(val_Rn_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (`ADDRESS_LEN) val_Rm_register (.q(Val_Rm_out), .d(val_Rm_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (24) imm24_register (.q(Signed_imm_24_out), .d(signed_immediate_mux_out), .clk(clk), .rst(rst));
