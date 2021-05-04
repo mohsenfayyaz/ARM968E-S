@@ -97,7 +97,7 @@ module ID_Stage(
     .rst(rst),
     .src1(Rn),
     .src2(reg_src2),
-    .dst_wb(WB_Dest),
+    .dest_wb(WB_Dest),
     .result_wb(WB_Value),
     .wb_en(WB_WB_EN),
     .reg1(Val_Rn),
