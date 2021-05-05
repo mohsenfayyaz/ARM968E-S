@@ -1,6 +1,6 @@
 `include "configs.v"
 
-module ALU (
+module ALU(
     input [3:0] EXE_CMD,
     input [`WORD_LEN - 1:0] Val1, Val2,
     input C_in,
