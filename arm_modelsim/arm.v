@@ -52,6 +52,12 @@ module ARM(input clk, rst);
   wire [11:0] r_Shift_operand;
   wire [`ADDRESS_LEN - 1:0] r_Branch_Address;
   
+  // Mem ---------- Golden (go)
+  wire go_MEM_W_EN, go_MEM_R_EN, go_WB_EN;
+  wire [`ADDRESS_LEN - 1:0] go_ALU_Res;
+  wire [`ADDRESS_LEN - 1:0] go_Val_Rm;
+  wire [3:0] go_Dest;
+  
   // 
   
   
@@ -147,6 +153,21 @@ module ARM(input clk, rst);
     .Branch_Address(r_Branch_Address)
   );
   
+  
+  Exe_Stage_Reg exe_stage_reg(
+    // Inputs
+    .clk(clk), .rst(rst),
+    .pc_in(r_pc_out),
+    .ALU_Res(r_ALU_Res), .Val_Rm(r_Val_Rm_out),
+    .MEM_W_EN(r_MEM_W_EN_out), .MEM_R_EN(r_MEM_R_EN_out), .WB_EN(r_WB_EN_out),
+    .Dest(r_Dest_out),
+  
+    // output
+    .pc(go_pc),
+    .MEM_W_EN_out(go_MEM_W_EN_out), .MEM_R_EN_out(go_MEM_R_EN_out), .WB_EN_out(go_WB_EN_out),
+    .ALU_Res_out(go_ALU_Res), .Val_Rm_out(go_Val_Rm),
+    .Dest_out(go_Dest)
+  );
   
   
 endmodule
