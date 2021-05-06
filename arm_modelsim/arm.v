@@ -1,5 +1,15 @@
 `include "configs.v"
 
+/*
+Wires Naming Convention:
+IF: purple: p_*
+ID: green: g_*
+Exe: red: r_*
+Mem: golden: go_*
+WB: blue: b_*
+Hazard: yellow: y_*
+*/
+
 module ARM(input clk, rst);
   
   // IF ---------- PURPLE
@@ -42,7 +52,7 @@ module ARM(input clk, rst);
   wire [11:0] r_Shift_operand;
   wire [`ADDRESS_LEN - 1:0] r_Branch_Address;
   
-  // EXE 
+  // 
   
   
   assign freeze = 0;
@@ -136,6 +146,7 @@ module ARM(input clk, rst);
     .Branch_Tacken_out(r_Branch_Tacken),  // TODO: Check Possible Elimination
     .Branch_Address(r_Branch_Address)
   );
+  
   
   
 endmodule
