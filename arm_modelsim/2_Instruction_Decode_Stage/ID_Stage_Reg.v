@@ -25,6 +25,7 @@ module ID_Stage_Reg(
   wire [3:0] output_dst_mux_out, EXE_CMD_mux_out, src1_mux_out, src2_mux_out;
   wire imm_mux_out, s_mux_out, b_mux_out, MEM_W_EN_mux_out, MEM_R_EN_mux_out, WB_EN_mux_out;
 
+  // TODO: Implement flush inside reg
   Mux # (`ADDRESS_LEN) pc_mux (.first(pc_in),.second(32'b0),.select(flush),.out(pc_mux_out));
   Mux # (`ADDRESS_LEN) val_Rn_mux (.first(Val_Rn),.second(32'b0),.select(flush),.out(val_Rn_mux_out));
   Mux # (`ADDRESS_LEN) val_Rm_mux (.first(Val_Rm),.second(32'b0),.select(flush),.out(val_Rm_mux_out));

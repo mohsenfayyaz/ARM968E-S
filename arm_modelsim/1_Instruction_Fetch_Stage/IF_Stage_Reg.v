@@ -8,7 +8,9 @@ module IF_Stage_Reg(
 
   wire [`ADDRESS_LEN - 1 : 0] pc;
   wire [`ADDRESS_LEN - 1 : 0] instruction;
-
+  
+  
+  // TODO: Implement flush inside reg
   // PC register
   Mux # (`ADDRESS_LEN) pc_mux
   (
