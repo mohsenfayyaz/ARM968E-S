@@ -11,12 +11,14 @@ module ID_Stage_Reg(
   input [3:0] Dest, EXE_CMD, src1, src2,
   input [11:0] Shift_operand, 
   input flush,
+  input Z_in, C_in, V_in, N_in,
   
   output S_out, B_out, MEM_W_EN_out, MEM_R_EN_out, WB_EN_out, imm_out,
   output [`ADDRESS_LEN - 1:0] Val_Rn_out, Val_Rm_out,
   output [23:0] Signed_imm_24_out,
   output [3:0] Dest_out, EXE_CMD_out, src1_out, src2_out,
-  output [11:0] Shift_operand_out
+  output [11:0] Shift_operand_out,
+  output Z, C, V, N
 );
   
   wire [`ADDRESS_LEN - 1:0] pc_mux_out, val_Rn_mux_out, val_Rm_mux_out;
@@ -55,7 +57,11 @@ module ID_Stage_Reg(
   Regular_Register # (1) MEM_W_EN_register (.q(MEM_W_EN_out), .d(MEM_W_EN_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (1) MEM_R_EN_register (.q(MEM_R_EN_out), .d(MEM_R_EN_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (1) WB_EN_register (.q(WB_EN_out), .d(WB_EN_mux_out), .clk(clk), .rst(rst));
+  
+  // TODO: Not Used
   Regular_Register # (4) output_src1_register (.q(src1_out), .d(src1_mux_out), .clk(clk), .rst(rst));
   Regular_Register # (4) output_src2_register (.q(src2_out), .d(src2_mux_out), .clk(clk), .rst(rst));
+  
+  Regular_Register # (4) status_regs (.q({Z, C, V, N}), .d({Z_in, C_in, V_in, N_in}), .clk(clk), .rst(rst));
   
 endmodule
