@@ -52,7 +52,7 @@ module ARM(input clk, rst);
     .freeze(freeze),
     .branch_taken(branch_taken), 
     .branch_address(branch_address),
-    .pc_out(if_pc_out), 
+    .next_pc(if_pc_out), 
     .instruction_out(if_instruction_out)
   );
   

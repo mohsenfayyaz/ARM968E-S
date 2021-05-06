@@ -3,12 +3,11 @@
 module IF_Stage(
   input clk, rst, freeze, branch_taken, 
   input[`ADDRESS_LEN - 1:0] branch_address,
-  output[`ADDRESS_LEN - 1:0] pc_out, instruction_out
+  output[`ADDRESS_LEN - 1:0] next_pc, instruction_out
 );
-
-
+  
   wire [`ADDRESS_LEN - 1 : 0] pc;
-  wire [`ADDRESS_LEN - 1 : 0] next_pc;
+  wire [`ADDRESS_LEN - 1 : 0] pc_out;
 
   Mux #(`ADDRESS_LEN) pc_mux
   (
@@ -33,8 +32,6 @@ module IF_Stage(
       .address(pc_out)
   );
   
-
   assign next_pc = pc_out + 4;
-  
   
 endmodule
