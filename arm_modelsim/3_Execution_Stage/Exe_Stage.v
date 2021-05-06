@@ -37,15 +37,17 @@ module Exe_Stage(
 	assign Signed_EX_imm24 = {{6{Signed_imm_24[23]}}, Signed_imm_24, 2'b0};
 	assign Branch_Address = Signed_EX_imm24 + pc_in;
 	
+	wire [`ADDRESS_LEN - 1:0] val2;
+	
   Val2_Generator val2_generator(
       .Val_Rm(Val_Rm), .Shift_operand(Shift_operand), 
       .imm(imm), .is_mem(is_mem), 
       // Output
-      .val2_out(val2)
+      .Val2(val2)
 	);
 
 	ALU alu(
-      .alu_in1(val_Rn), .alu_in2(val2), 
+      .Val1(Val1), .Val2(val2), 
       .EXE_CMD(EXE_CMD), 
       .C_in(C),
       // Output

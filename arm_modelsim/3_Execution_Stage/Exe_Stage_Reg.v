@@ -2,8 +2,8 @@
 
 module Exe_Stage_Reg(
   input clk, rst,
-  input[`ADDRESS_LEN - 1:0] pc_in,
-  output reg[`ADDRESS_LEN - 1:0] pc,
+  input [`ADDRESS_LEN - 1:0] pc_in,
+  output [`ADDRESS_LEN - 1:0] pc,
   
   input [`ADDRESS_LEN - 1:0] ALU_Res, Val_Rm,
   input MEM_W_EN, MEM_R_EN, WB_EN,

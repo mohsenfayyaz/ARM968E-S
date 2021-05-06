@@ -53,6 +53,7 @@ module ARM(input clk, rst);
   wire [`ADDRESS_LEN - 1:0] r_Branch_Address;
   
   // Mem ---------- Golden (go)
+  wire [`ADDRESS_LEN - 1:0] go_pc, go_pc_out;
   wire go_MEM_W_EN, go_MEM_R_EN, go_WB_EN;
   wire [`ADDRESS_LEN - 1:0] go_ALU_Res;
   wire [`ADDRESS_LEN - 1:0] go_Val_Rm;
