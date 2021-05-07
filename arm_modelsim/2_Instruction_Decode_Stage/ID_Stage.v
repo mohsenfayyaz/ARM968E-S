@@ -34,7 +34,8 @@ module ID_Stage(
   wire[1:0] mode;
   wire[3:0] opcode, exe_cmd, cond, Rn, Rm, Rd, reg_src2;
   wire status, mem_read, mem_write, wb_en, branch, status_update, cond_check, control_unit_mux_select;
-
+  
+  assign pc = pc_in;
   assign output_src1 = Rn;
   assign output_src2 = reg_src2;
   assign mode = instruction[27:26];
@@ -50,7 +51,7 @@ module ID_Stage(
   assign Dest = Rd;
   assign Shift_operand = instruction[11:0];
   assign Signed_imm_24 = instruction[23 : 0];
-
+  
 
   Mux #(.WIDTH(9)) src1_mux
   (

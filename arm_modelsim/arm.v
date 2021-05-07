@@ -22,7 +22,7 @@ module ARM(input clk, rst);
   // From Status Reg Color
   wire Z, C, V, N;  // Status Reg Outputs
   wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
-  wire exe_Z, exe_C, exe_V, exe_N;  // In exe after last layer regs (black)
+  wire exe_Z, exe_C, exe_V, exe_N;  // In exe after ID regs (black)
   // Blue Wires
   wire b_WB_WB_EN;
   wire [3:0] b_WB_Dest;
@@ -90,7 +90,6 @@ module ARM(input clk, rst);
     // Inputs
     .clk(clk), .rst(rst),
     .pc_in(if_reg_pc_out),
-    .pc(g_pc_out),
     .instruction(if_instruction_out),
     .Hazard(y_Hazard), 
     .z(Z), .c(C), .v(V), .n(N),
@@ -98,6 +97,7 @@ module ARM(input clk, rst);
     .WB_Dest(b_WB_Dest),
     .WB_Value(b_WB_Value),
     // Outputs
+    .pc(g_pc_out),
     .S(g_S), .B(g_B),
     .MEM_W_EN(g_MEM_W_EN), .MEM_R_EN(g_MEM_R_EN), .WB_EN(g_WB_EN),
     .EXE_CMD(g_EXE_CMD),

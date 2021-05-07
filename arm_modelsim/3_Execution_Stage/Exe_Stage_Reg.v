@@ -14,7 +14,7 @@ module Exe_Stage_Reg(
   output [3:0] Dest_out
 );
   
-  Regular_Register #(`ADDRESS_LEN) pc_register (.q(pc), .d(pc_mux_out), .clk(clk), .rst(rst));
+  Regular_Register #(`ADDRESS_LEN) pc_register (.q(pc), .d(pc_in), .clk(clk), .rst(rst));
   Regular_Register #(`ADDRESS_LEN) r2 (.q(ALU_Res_out), .d(ALU_Res), .clk(clk), .rst(rst));
   Regular_Register #(`ADDRESS_LEN) r3 (.q(Val_Rm_out), .d(Val_Rm), .clk(clk), .rst(rst));
   Regular_Register #(4) r4 (.q(Dest_out), .d(Dest), .clk(clk), .rst(rst));
