@@ -6,5 +6,8 @@ module Mem_Stage(
   output[`ADDRESS_LEN - 1:0] pc
 );
   
+  assign pc = pc_in;
+  
+  Regular_Register #(`ADDRESS_LEN) pc_register (.q(pc), .d(pc_in), .clk(clk), .rst(rst));
   
 endmodule

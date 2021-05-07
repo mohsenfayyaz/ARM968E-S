@@ -14,7 +14,7 @@ module ARM(input clk, rst);
   
   // IF ---------- PURPLE
   wire freeze, branch_taken;
-  wire[`ADDRESS_LEN - 1:0] if_pc_out, if_reg_pc_out, if_instruction_out, if_reg_instruction_out;
+  wire[`ADDRESS_LEN - 1:0] p_pc_out, g_pc, if_instruction_out, if_reg_instruction_out;
   
   // ID ---------- GREEN
   // Yellow
@@ -71,7 +71,7 @@ module ARM(input clk, rst);
     .freeze(freeze),
     .branch_taken(branch_taken), 
     .branch_address(r_Branch_Address),
-    .next_pc(if_pc_out), 
+    .next_pc(p_pc_out), 
     .instruction_out(if_instruction_out)
   );
   
@@ -80,16 +80,16 @@ module ARM(input clk, rst);
     .rst(rst), 
     .freeze(freeze),
     .flush(r_Branch_Tacken),
-    .pc_in(if_pc_out), 
+    .pc_in(p_pc_out), 
     .instruction_in(if_instruction_out),
-    .pc_out(if_reg_pc_out), 
+    .pc_out(g_pc), 
     .instruction_out(if_reg_instruction_out)
   );
   
   ID_Stage id_stage(
     // Inputs
     .clk(clk), .rst(rst),
-    .pc_in(if_reg_pc_out),
+    .pc_in(g_pc),
     .instruction(if_instruction_out),
     .Hazard(y_Hazard), 
     .z(Z), .c(C), .v(V), .n(N),

@@ -22,6 +22,7 @@ module Exe_Stage(
   output [`ADDRESS_LEN - 1:0] Branch_Address
 );
   
+  assign pc = pc_in;
   assign MEM_R_EN_out = MEM_R_EN;
 	assign MEM_W_EN_out = MEM_W_EN;
   assign WB_EN_out = WB_EN;
