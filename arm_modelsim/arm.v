@@ -14,7 +14,7 @@ module ARM(input clk, rst);
   
   // IF ---------- PURPLE
   wire freeze, branch_taken;
-  wire[`ADDRESS_LEN - 1:0] p_pc_out, g_pc, if_instruction_out, if_reg_instruction_out;
+  wire[`ADDRESS_LEN - 1:0] p_pc_out, if_instruction_out, if_reg_instruction_out;
   
   // ID ---------- GREEN
   // Yellow
@@ -30,7 +30,7 @@ module ARM(input clk, rst);
   
   wire g_S, g_B, g_MEM_W_EN, g_MEM_R_EN, g_WB_EN;
   wire [3:0] g_EXE_CMD;
-  wire [`ADDRESS_LEN - 1:0] g_Val_Rn, g_Val_Rm;
+  wire [`ADDRESS_LEN - 1:0] g_pc, g_Val_Rn, g_Val_Rm;
   wire g_imm;
   wire [23:0] g_Signed_imm_24;
   wire [3:0] g_Dest;
@@ -168,6 +168,15 @@ module ARM(input clk, rst);
     .MEM_W_EN_out(go_MEM_W_EN_out), .MEM_R_EN_out(go_MEM_R_EN_out), .WB_EN_out(go_WB_EN_out),
     .ALU_Res_out(go_ALU_Res), .Val_Rm_out(go_Val_Rm),
     .Dest_out(go_Dest)
+  );
+  
+  Status_Register status_register(
+    // Inputs
+    .clk(clk), .rst(rst),
+    .S(r_S),
+    .C(C_in), .V(V_in), .Z(Z_in), .N(N_in),
+    // Outputs
+    .C_out(C), .V_out(V), .Z_out(Z), .N_out(N)
   );
   
   
