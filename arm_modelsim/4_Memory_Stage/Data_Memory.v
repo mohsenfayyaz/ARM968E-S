@@ -4,7 +4,7 @@ module Data_Memory(
     input clk, rst,
     input MEM_R_EN, MEM_W_EN,
     input [`ADDRESS_LEN - 1:0] ALU_Res,  // Address
-    input [`WORD_LEN - 1:0] Val_RM,  // Writing Value
+    input [`WORD_LEN - 1:0] Val_Rm,  // Writing Value
     
     output [`WORD_LEN - 1:0] out
 );
@@ -26,8 +26,8 @@ module Data_Memory(
     integer i;
     always @(posedge clk) begin : Write
       if(MEM_W_EN == 1)begin
-        regs[address] = Val_RM;
-        $display("WRITE mem[%d] = %d", address, Val_RM);
+        regs[address] = Val_Rm;
+        $display("WRITE mem[%d] = %d", address, Val_Rm);
         for(i=0; i<11; i=i+1)
           $display("Mem[%d] = %d", i, regs[i]);
       end

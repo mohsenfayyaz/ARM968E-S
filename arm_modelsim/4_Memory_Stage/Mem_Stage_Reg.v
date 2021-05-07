@@ -17,10 +17,10 @@ module Mem_Stage_Reg(
 );
   
   Regular_Register #(`ADDRESS_LEN) pc_reg (.q(pc), .d(pc_in), .clk(clk), .rst(rst));
-  Register #(`ADDRESS_LEN) ALU_Res_reg(.q(ALU_Res_out), .d(ALU_Res), .clk(clk), .rst(rst));
-  Register #(`WORD_LEN) _reg(.q(memory_reg_out), .d(memory_out), .clk(clk), .rst(rst));
-  Register #(1) MEM_R_EN_reg(.q(MEM_R_EN_out), .d(MEM_R_EN), .clk(clk), .rst(rst));
-  Register #(1) WB_EN_reg(.q(WB_EN_out), .d(WB_EN), .clk(clk), .rst(rst));
-  Register #(4) Dest_reg(.q(Dest_out), .d(Dest), .clk(clk), .rst(rst));
+  Regular_Register #(`ADDRESS_LEN) ALU_Res_reg(.q(ALU_Res_out), .d(ALU_Res), .clk(clk), .rst(rst));
+  Regular_Register #(`WORD_LEN) memory_out_reg(.q(memory_reg_out), .d(memory_out), .clk(clk), .rst(rst));
+  Regular_Register #(1) MEM_R_EN_reg(.q(MEM_R_EN_out), .d(MEM_R_EN), .clk(clk), .rst(rst));
+  Regular_Register #(1) WB_EN_reg(.q(WB_EN_out), .d(WB_EN), .clk(clk), .rst(rst));
+  Regular_Register #(4) Dest_reg(.q(Dest_out), .d(Dest), .clk(clk), .rst(rst));
   
 endmodule

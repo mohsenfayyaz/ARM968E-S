@@ -60,8 +60,9 @@ module ARM(input clk, rst);
   wire [3:0] go_Dest;
   wire [`WORD_LEN - 1:0] go_memory_out, go_memory_reg_out;
   
-  // 
-  
+  // WB ---------- Blue
+  wire [`ADDRESS_LEN - 1:0] b_pc, b_ALU_Res;
+  wire [`WORD_LEN - 1:0]b_memory_out;
   
   assign freeze = 0;
   assign branch_taken = 0;
@@ -208,6 +209,16 @@ module ARM(input clk, rst);
     .MEM_R_EN_out(b_MEM_R_EN), .WB_EN_out(b_WB_WB_EN),
     .Dest_out(b_WB_Dest)
   );
+  
+  WB_Stage wb_stage(
+    // Inputs
+    .clk(clk), .rst(rst),
+    .ALU_Res(b_ALU_Res), .data_memory_out(b_memory_out),
+    .MEM_R_EN(b_MEM_R_EN),
+    // Outputs
+    .WB_Value(b_WB_Value)
+  );
+  
   
   
 endmodule

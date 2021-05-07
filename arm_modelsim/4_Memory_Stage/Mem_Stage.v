@@ -7,18 +7,18 @@ module Mem_Stage(
   
   input MEM_R_EN, MEM_W_EN,
   input [`ADDRESS_LEN - 1:0] ALU_Res,
-  input [`WORD_LEN - 1:0] Val_RM,
+  input [`WORD_LEN - 1:0] Val_Rm,
   output [`WORD_LEN - 1:0] memory_out
 );
   
   assign pc = pc_in;
   Regular_Register #(`ADDRESS_LEN) pc_register (.q(pc), .d(pc_in), .clk(clk), .rst(rst));
   
-  Data_Memory(
+  Data_Memory data_memory(
     .clk(clk), .rst(rst),
     .MEM_R_EN(MEM_R_EN), .MEM_W_EN(MEM_W_EN),
     .ALU_Res(ALU_Res),  // Address
-    .Val_RM(Val_RM),  // Writing Value
+    .Val_Rm(Val_Rm),  // Writing Value
     .out(memory_out)
   );
   
