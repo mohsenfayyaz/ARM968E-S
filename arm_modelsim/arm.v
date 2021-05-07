@@ -58,6 +58,7 @@ module ARM(input clk, rst);
   wire [`ADDRESS_LEN - 1:0] go_ALU_Res;
   wire [`ADDRESS_LEN - 1:0] go_Val_Rm;
   wire [3:0] go_Dest;
+  wire [`WORD_LEN - 1:0] go_memory_out, go_memory_reg_out;
   
   // 
   
@@ -165,7 +166,7 @@ module ARM(input clk, rst);
   
     // output
     .pc(go_pc),
-    .MEM_W_EN_out(go_MEM_W_EN_out), .MEM_R_EN_out(go_MEM_R_EN_out), .WB_EN_out(go_WB_EN_out),
+    .MEM_W_EN_out(go_MEM_W_EN), .MEM_R_EN_out(go_MEM_R_EN), .WB_EN_out(go_WB_EN),
     .ALU_Res_out(go_ALU_Res), .Val_Rm_out(go_Val_Rm),
     .Dest_out(go_Dest)
   );
@@ -177,6 +178,19 @@ module ARM(input clk, rst);
     .C(C_in), .V(V_in), .Z(Z_in), .N(N_in),
     // Outputs
     .C_out(C), .V_out(V), .Z_out(Z), .N_out(N)
+  );
+  
+  Mem_Stage mem_stage(
+    // Inputs
+    .clk(clk), .rst(rst),
+    .pc_in(go_pc),
+    .MEM_W_EN(go_MEM_W_EN), .MEM_R_EN(go_MEM_R_EN),
+    .ALU_Res(go_ALU_Res),
+    .Val_Rm(go_Val_Rm),
+    
+    // Outputs
+    .pc(go_pc_out),
+    .memory_out(go_memory_out)
   );
   
   
