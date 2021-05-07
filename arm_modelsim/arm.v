@@ -193,5 +193,21 @@ module ARM(input clk, rst);
     .memory_out(go_memory_out)
   );
   
+  Mem_Stage_Reg mem_stage_reg(
+    // Inputs
+    .clk(clk), .rst(rst),
+    .pc_in(go_pc_out),
+    .ALU_Res(go_ALU_Res),
+    .memory_out(go_memory_out),
+    .MEM_R_EN(go_MEM_R_EN), .WB_EN(go_WB_EN),
+    .Dest(go_Dest),
+    // Outputs
+    .pc(b_pc),
+    .ALU_Res_out(b_ALU_Res),
+    .memory_reg_out(b_memory_out),
+    .MEM_R_EN_out(b_MEM_R_EN), .WB_EN_out(b_WB_WB_EN),
+    .Dest_out(b_WB_Dest)
+  );
+  
   
 endmodule
