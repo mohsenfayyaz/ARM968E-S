@@ -31,7 +31,7 @@ module Exe_Stage(
 	assign S_out = S;
 	
 	wire is_mem;
-	assign is_mem = MEM_R_EN | MEM_R_EN;
+	assign is_mem = MEM_R_EN | MEM_W_EN;
 	
 	wire [`ADDRESS_LEN - 1:0] Signed_EX_imm24;
 	assign Signed_EX_imm24 = {{6{Signed_imm_24[23]}}, Signed_imm_24, 2'b0};
