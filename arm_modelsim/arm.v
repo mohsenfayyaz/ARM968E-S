@@ -17,8 +17,6 @@ module ARM(input clk, rst);
   wire[`ADDRESS_LEN - 1:0] p_pc_out, if_instruction_out, if_reg_instruction_out;
   
   // ID ---------- GREEN
-  // Yellow
-  wire y_Hazard;
   // From Status Reg Color
   wire Z, C, V, N;  // Status Reg Outputs
   wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
@@ -38,6 +36,7 @@ module ARM(input clk, rst);
   // Yellow
   wire y_Two_src;
   wire [3:0] y_output_src1, y_output_src2;
+  wire y_Hazard;  // AKA Freeze
   
   // EXE ---------- Red
   wire [`ADDRESS_LEN - 1:0] r_pc, r_pc_out;
@@ -64,13 +63,13 @@ module ARM(input clk, rst);
   wire [`ADDRESS_LEN - 1:0] b_pc, b_ALU_Res;
   wire [`WORD_LEN - 1:0]b_memory_out;
   
-  assign freeze = 0;
-  assign branch_taken = 0;
+  //assign freeze = 0;
+  //assign branch_taken = 0;
   
   IF_Stage if_stage(
     .clk(clk),
     .rst(rst), 
-    .freeze(freeze),
+    .freeze(y_Hazard),
     .branch_taken(branch_taken), 
     .branch_address(r_Branch_Address),
     .next_pc(p_pc_out), 
@@ -80,7 +79,7 @@ module ARM(input clk, rst);
   IF_Stage_Reg if_stage_reg(
     .clk(clk),
     .rst(rst), 
-    .freeze(freeze),
+    .freeze(y_Hazard),
     .flush(r_Branch_Tacken),
     .pc_in(p_pc_out), 
     .instruction_in(if_instruction_out),
@@ -109,7 +108,7 @@ module ARM(input clk, rst);
     .Dest(g_Dest), 
     .Shift_operand(g_Shift_operand),
     .Two_src(y_Two_src),
-    .output_src1(y_output_src1), .output_src2(y_output_src2)
+    .output_src1(y_output_src1), .output_src2(y_output_src2 /*Actually Black*/)
   );
   
   ID_Stage_Reg id_stage_reg(
@@ -131,6 +130,14 @@ module ARM(input clk, rst);
     .Dest_out(r_Dest), .EXE_CMD_out(r_EXE_CMD), .src1_out(r_output_src1), .src2_out(r_output_src2),
     .Shift_operand_out(r_Shift_operand),
     .Z(exe_Z), .C(exe_C), .V(exe_V), .N(exe_N)
+  );
+  
+  Hazard_Detection_Unit hazard_detection_unit(
+    // Inputs
+    .MEM_Dest(go_Dest), .EXE_Dest(r_Dest), .src1(y_output_src1) /*Rn Address*/, .src2(y_output_src2 /*Actually Black*/) /*Rm or Rd Address(When Mem_W)*/,
+    .MEM_WB_EN(go_WB_EN), .EXE_WB_EN(r_WB_EN), .Two_src(y_Two_src),
+    // Outputs
+    .Hazard(y_Hazard)
   );
   
   
