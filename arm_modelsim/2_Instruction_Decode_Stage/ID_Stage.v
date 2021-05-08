@@ -28,7 +28,7 @@ module ID_Stage(
   output [11:0] Shift_operand,
   // Yellow
   output Two_src,
-  output [3:0] output_src1, output_src2
+  output [3:0] output_src1 /*Rn For Hazard*/, output_src2 /*Rm or Rd (When Mem_W)*/
 );
   
   wire[1:0] mode;
@@ -38,14 +38,15 @@ module ID_Stage(
   assign pc = pc_in;
   assign output_src1 = Rn;
   assign output_src2 = reg_src2;
+  assign cond = instruction[31:28];
   assign mode = instruction[27:26];
+  assign imm = instruction[25];
   assign opcode = instruction[24:21];
   assign status = instruction[20];
-  assign cond = instruction[31:28];
   assign Rn = instruction[19:16];
   assign Rd = instruction[15:12];
   assign Rm = instruction[3:0];
-  assign imm = instruction[25];
+  
   assign two_src = ~imm | mem_write;
   assign control_unit_mux_select = ~cond_check | Hazard;
   assign Dest = Rd;
