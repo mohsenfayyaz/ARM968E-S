@@ -20,19 +20,13 @@ module ID_Stage_Reg(
   output [11:0] Shift_operand_out,
   output Z, C, V, N
 );
-  
-  wire [`ADDRESS_LEN - 1:0] val_Rn_mux_out, val_Rm_mux_out;
-  wire [23:0] signed_immediate_mux_out;
-  wire [11:0] shift_operand_mux_out;
-  wire [3:0] output_dst_mux_out, EXE_CMD_mux_out, src1_mux_out, src2_mux_out;
-  wire imm_mux_out, s_mux_out, b_mux_out, MEM_W_EN_mux_out, MEM_R_EN_mux_out, WB_EN_mux_out;
 
   Flushable_Freezable_Register #(`ADDRESS_LEN) pc_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(pc), .d(pc_in));
   Flushable_Freezable_Register #(`ADDRESS_LEN) val_rn_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Val_Rn_out), .d(Val_Rn));
   Flushable_Freezable_Register #(`ADDRESS_LEN) val_rm_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Val_Rm_out), .d(Val_Rm));   
   Flushable_Freezable_Register #(24) imm24_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Signed_imm_24_out), .d(Signed_imm_24));
-  Flushable_Freezable_Register #(4) dst_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Dest_out), .d(Dest));
   Flushable_Freezable_Register #(12) shift_operand_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Shift_operand_out), .d(Shift_operand));
+  Flushable_Freezable_Register #(4) dst_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(Dest_out), .d(Dest));
   Flushable_Freezable_Register #(1) imm_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(imm_out), .d(imm));
   Flushable_Freezable_Register #(1) s_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(S_out), .d(S));
   Flushable_Freezable_Register #(1) b_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(B_out), .d(B));
@@ -43,7 +37,6 @@ module ID_Stage_Reg(
 
   Flushable_Freezable_Register #(4) status_regs (.q({Z, C, V, N}), .d({Z_in, C_in, V_in, N_in}), .flush(flush), .freeze(1'b0), .clk(clk), .rst(rst));
   
-  // TODO: Not Used
   Flushable_Freezable_Register #(4) src1_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(src1_out), .d(src1));
   Flushable_Freezable_Register #(4) src2_register (.clk(clk), .rst(rst), .freeze(1'b0), .flush(flush), .q(src2_out), .d(src2));
   

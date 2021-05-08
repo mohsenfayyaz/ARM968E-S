@@ -46,6 +46,7 @@ module ARM(input clk, rst);
   wire [23:0] r_Signed_imm_24;
   wire [3:0] r_Dest, r_Dest_out;
   wire [11:0] r_Shift_operand;
+  wire r_Branch_Tacken;
   wire [`ADDRESS_LEN - 1:0] r_Branch_Address;
   
   // Mem ---------- Golden (go)
@@ -160,7 +161,6 @@ module ARM(input clk, rst);
     .ALU_Res(r_ALU_Res), .Val_Rm_out(r_Val_Rm_out),
     .Dest_out(r_Dest_out),
     .C_out(C_in), .V_out(V_in), .Z_out(Z_in), .N_out(N_in),
-    .Branch_Tacken_out(r_Branch_Tacken),  // TODO: Check Possible Elimination
     .Branch_Address(r_Branch_Address)
   );
   

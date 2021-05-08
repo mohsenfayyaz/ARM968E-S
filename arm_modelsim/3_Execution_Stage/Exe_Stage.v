@@ -18,7 +18,6 @@ module Exe_Stage(
   output [`ADDRESS_LEN - 1:0] ALU_Res, Val_Rm_out,
   output [3:0] Dest_out,
   output C_out, V_out, Z_out, N_out,
-  output Branch_Tacken_out,
   output [`ADDRESS_LEN - 1:0] Branch_Address
 );
   
