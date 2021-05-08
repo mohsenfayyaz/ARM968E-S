@@ -13,18 +13,10 @@ Hazard: yellow: y_*
 module ARM(input clk, rst);
   
   // IF ---------- PURPLE
-  wire[`ADDRESS_LEN - 1:0] p_pc_out, if_instruction_out, if_reg_instruction_out;
+  wire[`ADDRESS_LEN - 1:0] p_pc_out, p_instruction;
   
   // ID ---------- GREEN
-  // From Status Reg Color
-  wire Z, C, V, N;  // Status Reg Outputs
-  wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
-  wire exe_Z, exe_C, exe_V, exe_N;  // In exe after ID regs (black)
-  // Blue Wires
-  wire b_WB_WB_EN;
-  wire [3:0] b_WB_Dest;
-  wire [`ADDRESS_LEN - 1:0] b_WB_Value, g_pc_out;
-  
+  wire[`ADDRESS_LEN - 1:0] g_instruction;
   wire g_S, g_B, g_MEM_W_EN, g_MEM_R_EN, g_WB_EN;
   wire [3:0] g_EXE_CMD;
   wire [`ADDRESS_LEN - 1:0] g_pc, g_Val_Rn, g_Val_Rm;
@@ -32,7 +24,13 @@ module ARM(input clk, rst);
   wire [23:0] g_Signed_imm_24;
   wire [3:0] g_Dest;
   wire [11:0] g_Shift_operand;
-  // Yellow
+ 
+ // Status Reg ---------- No Name Color!
+  wire Z, C, V, N;  // Status Reg Outputs
+  wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
+  wire exe_Z, exe_C, exe_V, exe_N;  // In exe after ID regs (black)
+  
+  // Hazard ---------- Yellow
   wire y_Two_src;
   wire [3:0] y_output_src1, y_output_src2;
   wire y_Hazard;  // AKA Freeze
@@ -40,7 +38,7 @@ module ARM(input clk, rst);
   // EXE ---------- Red
   wire [`ADDRESS_LEN - 1:0] r_pc, r_pc_out;
   wire [3:0] r_output_src1, r_output_src2;
-  wire r_S, r_B, r_MEM_W_EN, r_MEM_R_EN, r_WB_EN, r_MEM_W_EN_out, r_MEM_R_EN_out, r_WB_EN_out;
+  wire r_S, r_MEM_W_EN, r_MEM_R_EN, r_WB_EN, r_MEM_W_EN_out, r_MEM_R_EN_out, r_WB_EN_out;
   wire [3:0] r_EXE_CMD;
   wire [`ADDRESS_LEN - 1:0] r_Val_Rn, r_Val_Rm, r_Val_Rm_out;
   wire [`ADDRESS_LEN - 1:0] r_ALU_Res;
@@ -56,38 +54,45 @@ module ARM(input clk, rst);
   wire [`ADDRESS_LEN - 1:0] go_ALU_Res;
   wire [`ADDRESS_LEN - 1:0] go_Val_Rm;
   wire [3:0] go_Dest;
-  wire [`WORD_LEN - 1:0] go_memory_out, go_memory_reg_out;
+  wire [`WORD_LEN - 1:0] go_memory_out;
   
   // WB ---------- Blue
   wire [`ADDRESS_LEN - 1:0] b_pc, b_ALU_Res;
   wire [`WORD_LEN - 1:0]b_memory_out;
+  wire b_WB_WB_EN;
+  wire [3:0] b_WB_Dest;
+  wire [`ADDRESS_LEN - 1:0] b_WB_Value, g_pc_out;
   
   IF_Stage if_stage(
+    // Inputs
     .clk(clk),
     .rst(rst), 
     .freeze(y_Hazard),
     .branch_taken(r_Branch_Tacken), 
     .branch_address(r_Branch_Address),
+    // Outputs
     .next_pc(p_pc_out), 
-    .instruction_out(if_instruction_out)
+    .instruction_out(p_instruction)
   );
   
   IF_Stage_Reg if_stage_reg(
+    // Inputs
     .clk(clk),
     .rst(rst), 
     .freeze(y_Hazard),
     .flush(r_Branch_Tacken),
     .pc_in(p_pc_out), 
-    .instruction_in(if_instruction_out),
+    .instruction_in(p_instruction),
+    // Outputs
     .pc_out(g_pc), 
-    .instruction_out(if_reg_instruction_out)
+    .instruction_out(g_instruction)
   );
   
   ID_Stage id_stage(
     // Inputs
     .clk(clk), .rst(rst),
     .pc_in(g_pc),
-    .instruction(if_instruction_out),
+    .instruction(g_instruction),
     .Hazard(y_Hazard), 
     .z(Z), .c(C), .v(V), .n(N),
     .WB_WB_EN(b_WB_WB_EN),
@@ -142,7 +147,7 @@ module ARM(input clk, rst);
     .clk(clk), .rst(rst),
     .pc_in(r_pc),
     
-    .S(r_S), .Branch_Tacken(r_B) /*B*/, .MEM_W_EN(r_MEM_W_EN), .MEM_R_EN(r_MEM_R_EN), .WB_EN(r_WB_EN), .imm(r_imm),
+    .S(r_S), .Branch_Tacken(r_Branch_Tacken) /*B*/, .MEM_W_EN(r_MEM_W_EN), .MEM_R_EN(r_MEM_R_EN), .WB_EN(r_WB_EN), .imm(r_imm),
     .Val1(r_Val_Rn) /*Val_Rn*/, .Val_Rm(r_Val_Rm),
     .Signed_imm_24(r_Signed_imm_24),
     .Dest(r_Dest), .EXE_CMD(r_EXE_CMD),

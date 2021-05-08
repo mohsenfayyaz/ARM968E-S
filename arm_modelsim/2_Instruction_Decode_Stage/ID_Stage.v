@@ -47,16 +47,16 @@ module ID_Stage(
   assign Rd = instruction[15:12];
   assign Rm = instruction[3:0];
   
-  assign two_src = ~imm | mem_write;
+  assign Two_src = ~imm | mem_write;
   assign control_unit_mux_select = ~cond_check | Hazard;
   assign Dest = Rd;
   assign Shift_operand = instruction[11:0];
-  assign Signed_imm_24 = instruction[23 : 0];
+  assign Signed_imm_24 = instruction[23:0];
   
 
   Mux #(.WIDTH(9)) src1_mux
   (
-    .first({status_update,branch,exe_cmd,mem_write,mem_read,wb_en}),
+    .first({status_update, branch, exe_cmd, mem_write,  mem_read, wb_en}),
     .second(9'b0),
     .select(control_unit_mux_select),
     .out({S, B, EXE_CMD, MEM_W_EN, MEM_R_EN, WB_EN})
