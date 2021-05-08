@@ -13,7 +13,6 @@ Hazard: yellow: y_*
 module ARM(input clk, rst);
   
   // IF ---------- PURPLE
-  wire freeze, branch_taken;
   wire[`ADDRESS_LEN - 1:0] p_pc_out, if_instruction_out, if_reg_instruction_out;
   
   // ID ---------- GREEN
@@ -63,14 +62,11 @@ module ARM(input clk, rst);
   wire [`ADDRESS_LEN - 1:0] b_pc, b_ALU_Res;
   wire [`WORD_LEN - 1:0]b_memory_out;
   
-  //assign freeze = 0;
-  //assign branch_taken = 0;
-  
   IF_Stage if_stage(
     .clk(clk),
     .rst(rst), 
     .freeze(y_Hazard),
-    .branch_taken(branch_taken), 
+    .branch_taken(r_Branch_Tacken), 
     .branch_address(r_Branch_Address),
     .next_pc(p_pc_out), 
     .instruction_out(if_instruction_out)
