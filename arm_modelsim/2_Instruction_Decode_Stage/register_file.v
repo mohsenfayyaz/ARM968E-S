@@ -22,8 +22,9 @@ module Register_File (
     else if (wb_en) begin
       registers[dest_wb] <= result_wb;
       $display("WRITE regs[%d] = %d", dest_wb, result_wb);
-      /*for(i = 0; i < 15; i = i + 1)
-        $display("Reg[%d] = %d", i, registers[i]);*/
+      if(dest_wb == 32'd6)
+        for(i = 0; i < 15; i = i + 1)
+          $display("Reg[%d] = %d", i, registers[i]);
     end
   end
 

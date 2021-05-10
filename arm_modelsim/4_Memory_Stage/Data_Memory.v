@@ -4,12 +4,12 @@ module Data_Memory(
     input clk, rst,
     input MEM_R_EN, MEM_W_EN,
     input [`ADDRESS_LEN - 1:0] ALU_Res,  // Address
-    input [`WORD_LEN - 1:0] Val_Rm,  // Writing Value
+    input signed [`WORD_LEN - 1:0] Val_Rm,  // Writing Value
     
     output [`WORD_LEN - 1:0] out
 );
     // Data
-    reg [`WORD_LEN - 1:0] regs [0:`MEMORY_SIZE - 1];
+    reg signed [`WORD_LEN - 1:0] regs [0:`MEMORY_SIZE - 1];
     
     // Fix Address
     wire [`ADDRESS_LEN - 1:0] ALU_Res_1024;

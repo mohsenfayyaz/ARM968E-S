@@ -58,7 +58,7 @@ module ALU(
             V = C ^ ALU_Res[31];
         end
     endcase
-    $display("Mohsen: ALU %d,%d,%d = %d,%d", Val1, Val2, C_in, ALU_Res, C);
+    //$display("Mohsen: ALU %d,%d,%d = %d,%d", Val1, Val2, C_in, ALU_Res, C);
   end
 
 endmodule
