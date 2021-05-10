@@ -2,9 +2,9 @@
 
 module ALU(
     input [3:0] EXE_CMD,
-    input [`WORD_LEN - 1:0] Val1, Val2,
+    input signed [`WORD_LEN - 1:0] Val1, Val2,
     input C_in,
-    output reg [`WORD_LEN - 1:0] ALU_Res,
+    output reg signed [`WORD_LEN - 1:0] ALU_Res,
     output reg C, V,
     output Z, N
 );
@@ -34,7 +34,7 @@ module ALU(
             V = C ^ ALU_Res[31];
         end
         4'b0101: begin // SBC
-            {C, ALU_Res} = {Val1[31], Val1} - {Val2[31], Val2} - C_in;
+            {C, ALU_Res} = {Val1[31], Val1} - {Val2[31], Val2} - {32'b0, ~C_in};
             V = C ^ ALU_Res[31];
         end
         4'b0110: begin // AND
@@ -58,7 +58,7 @@ module ALU(
             V = C ^ ALU_Res[31];
         end
     endcase
-    $display("Mohsen: ALU %d,%d = %d", Val1, Val2, ALU_Res);
+    $display("Mohsen: ALU %d,%d,%d = %d,%d", Val1, Val2, C_in, ALU_Res, C);
   end
 
 endmodule
