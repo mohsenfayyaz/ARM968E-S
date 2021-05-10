@@ -19,8 +19,10 @@ module Data_Memory(
     
     assign out = regs[address];  // READ
     
+    integer j;
     initial begin
-      regs[0] = 0;
+      for(j = 0; j < `MEMORY_SIZE; j = j + 1)
+      regs[j] = 0;
     end
     
     integer i;
@@ -28,7 +30,7 @@ module Data_Memory(
       if(MEM_W_EN == 1)begin
         regs[address] = Val_Rm;
         $display("WRITE mem[%d] = %d", address, Val_Rm);
-        for(i=0; i<11; i=i+1)
+        for(i = 0; i < 11; i = i + 1)
           $display("Mem[%d] = %d", i, regs[i]);
       end
     end
