@@ -40,7 +40,7 @@ module Val2_Generator(
 
   assign Val2 = is_mem ? {20'b0, Shift_operand} :
           (
-            imm ? ((rotate_imm == 4'b0) ? {24'b0, immed_8} : immed_8_rotated) :
+            imm ? immed_8_rotated :
             // Page 8 -> Chart 4
             (shift == 2'b00) ? Val_Rm << {1'b0, shift_imm} :  // LSL Logical shift left
             (shift == 2'b01) ? Val_Rm >> {1'b0, shift_imm} :  // LSR Logical shift right
