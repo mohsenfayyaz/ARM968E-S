@@ -24,7 +24,10 @@ module Register_File (
       $display("WRITE regs[%d] = %d", dest_wb, result_wb);
       if(dest_wb == 32'd6)
         for(i = 0; i < 15; i = i + 1)
-          $display("Reg[%d] = %d", i, registers[i]);
+          if(i == dest_wb)
+            $display("Reg[%d] = %d", i, result_wb);
+          else
+            $display("Reg[%d] = %d", i, registers[i]);
     end
   end
 
