@@ -19,13 +19,14 @@ module IF_Stage_Reg(
     .select(flush),
     .out(pc)
   );
-  Freezable_Register pc_register
+  Flushable_Freezable_Register pc_register
   (
     .d(pc),
     .q(pc_out),
     .freeze(freeze),
     .clk(clk),
-    .rst(rst)
+    .rst(rst), 
+    .flush(0)
   );
   
   // Instruction register
@@ -37,13 +38,14 @@ module IF_Stage_Reg(
     .out(instruction)
   );
   
-  Freezable_Register instruction_register
+  Flushable_Freezable_Register instruction_register
   (
     .q(instruction_out),
     .d(instruction),
     .freeze(freeze),
     .clk(clk),
-    .rst(rst)
+    .rst(rst), 
+    .flush(0)
   );
 
 endmodule

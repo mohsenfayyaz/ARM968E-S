@@ -9,7 +9,7 @@ module ALU(
     output Z, N
 );
 
- assign Z = &{~{ALU_Res}};
+  assign Z = &{~{ALU_Res}};
   assign N = ALU_Res[31];
 
   always@(*) begin
