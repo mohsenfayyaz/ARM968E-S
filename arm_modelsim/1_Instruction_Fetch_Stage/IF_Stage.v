@@ -17,14 +17,14 @@ module IF_Stage(
       .out(pc)
   );
 
-  Flushable_Freezable_Register pc_register
+  Flushable_Freezable_Register #(`ADDRESS_LEN) pc_register
   (
       .d(pc),
       .q(pc_out),
       .freeze(freeze),
       .clk(clk),
       .rst(rst), 
-      .flush(0)
+      .flush(1'b0)
   );
 
   Instruction_Memory instruction_mem

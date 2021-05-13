@@ -6,8 +6,8 @@ module Freezable_Register
     input clk,
     input rst,
     input freeze,
-    input[SIZE - 1 : 0 ] d,
-    output reg[SIZE - 1 : 0 ] q
+    input[SIZE - 1:0] d,
+    output reg[SIZE - 1:0] q
 );
     always @(posedge clk, posedge rst)
         if (rst) q <= 0;

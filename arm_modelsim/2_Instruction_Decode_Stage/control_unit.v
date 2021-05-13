@@ -12,7 +12,7 @@ module Control_Unit
     {exe_cmd, mem_read, mem_write, wb_en, branch} = 0;
     case(mode)
       
-        2'b0: begin  // Arithmetic
+        2'b00: begin  // Arithmetic
                 case (opcode)
                     6'b1101: begin //MOV
                         exe_cmd = 4'b0001;
@@ -82,7 +82,7 @@ module Control_Unit
         end
         
     endcase
-end
+  end
 
     assign status_update = (mode == 2'b00) ? (
                                 (opcode == 4'b0000) ? 1'b0 : //NOP

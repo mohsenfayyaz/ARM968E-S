@@ -3,8 +3,8 @@
 module Flushable_Freezable_Register 
 # (parameter SIZE = `ADDRESS_LEN)
 (
-    output reg [SIZE - 1 : 0 ] q,
-    input [SIZE - 1 : 0 ] d,
+    output reg [SIZE - 1:0] q,
+    input [SIZE - 1:0] d,
     input clk,
     input rst, 
     input freeze, flush
