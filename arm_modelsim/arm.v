@@ -25,7 +25,8 @@ module ARM(input clk, rst);
   wire [3:0] g_Dest;
   wire [11:0] g_Shift_operand;
  
- // Status Reg ---------- No Name Color!
+ 
+// Status Reg ---------- No Name Color!
   wire Z, C, V, N;  // Status Reg Outputs
   wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
   wire exe_Z, exe_C, exe_V, exe_N;  // In exe after ID regs (black)
@@ -63,6 +64,8 @@ module ARM(input clk, rst);
   wire b_WB_WB_EN;
   wire [3:0] b_WB_Dest;
   wire [`ADDRESS_LEN - 1:0] b_WB_Value, g_pc_out;
+  
+  wire [3:0] bonus_EXE_CMD;  // For MVE MVN in Hazard
   
   IF_Stage if_stage(
     // Inputs
@@ -104,6 +107,9 @@ module ARM(input clk, rst);
     .S(g_S), .B(g_B),
     .MEM_W_EN(g_MEM_W_EN), .MEM_R_EN(g_MEM_R_EN), .WB_EN(g_WB_EN),
     .EXE_CMD(g_EXE_CMD),
+    
+    .BEFORE_MUX_EXE_CMD(bonus_EXE_CMD),
+    
     .Val_Rn(g_Val_Rn), .Val_Rm(g_Val_Rm),
     .imm(g_imm),
     .Signed_imm_24(g_Signed_imm_24),
@@ -138,6 +144,7 @@ module ARM(input clk, rst);
     // Inputs
     .MEM_Dest(go_Dest), .EXE_Dest(r_Dest), .src1(y_output_src1) /*Rn Address*/, .src2(y_output_src2 /*Actually Black*/) /*Rm or Rd Address(When Mem_W)*/,
     .MEM_WB_EN(go_WB_EN), .EXE_WB_EN(r_WB_EN), .Two_src(y_Two_src),
+    .EXE_CMD(bonus_EXE_CMD),  // BONUS
     // Outputs
     .Hazard(y_Hazard)
   );

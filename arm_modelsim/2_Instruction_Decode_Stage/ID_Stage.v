@@ -19,7 +19,7 @@ module ID_Stage(
   
   // Green
   output S, B, MEM_W_EN, MEM_R_EN, WB_EN,
-  output [3:0] EXE_CMD,
+  output [3:0] EXE_CMD, BEFORE_MUX_EXE_CMD,
   
   output [`ADDRESS_LEN - 1:0] Val_Rn, Val_Rm,
   output imm,
@@ -53,6 +53,7 @@ module ID_Stage(
   assign Shift_operand = instruction[11:0];
   assign Signed_imm_24 = instruction[23:0];
   
+  assign BEFORE_MUX_EXE_CMD = exe_cmd;
 
   Mux #(.WIDTH(9)) src1_mux
   (
