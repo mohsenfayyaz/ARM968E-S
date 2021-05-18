@@ -8,6 +8,7 @@ Exe: red: r_*
 Mem: golden: go_*
 WB: blue: b_*
 Hazard: yellow: y_*
+Forwarding: dark blue: db_*
 */
 
 module ARM(input clk, rst, FORWARDING_EN);
@@ -38,7 +39,6 @@ module ARM(input clk, rst, FORWARDING_EN);
   
   // EXE ---------- Red
   wire [`ADDRESS_LEN - 1:0] r_pc, r_pc_out;
-  wire [3:0] r_output_src1, r_output_src2;
   wire r_S, r_MEM_W_EN, r_MEM_R_EN, r_WB_EN, r_MEM_W_EN_out, r_MEM_R_EN_out, r_WB_EN_out;
   wire [3:0] r_EXE_CMD;
   wire [`ADDRESS_LEN - 1:0] r_Val_Rn, r_Val_Rm, r_Val_Rm_out;
@@ -66,6 +66,10 @@ module ARM(input clk, rst, FORWARDING_EN);
   wire [`ADDRESS_LEN - 1:0] b_WB_Value, g_pc_out;
   
   wire [3:0] bonus_EXE_CMD;  // For MVE MVN in Hazard
+  
+  // Forwarding --------- Dark Blue
+  wire [3:0] db_src1, db_src2;
+  wire [1:0] db_Sel_src1, db_Sel_src2;
   
   IF_Stage if_stage(
     // Inputs
@@ -126,7 +130,7 @@ module ARM(input clk, rst, FORWARDING_EN);
     .S(g_S), .B(g_B), .MEM_W_EN(g_MEM_W_EN), .MEM_R_EN(g_MEM_R_EN), .WB_EN(g_WB_EN), .imm(g_imm),
     .Val_Rn(g_Val_Rn), .Val_Rm(g_Val_Rm),
     .Signed_imm_24(g_Signed_imm_24),
-    .Dest(g_Dest), .EXE_CMD(g_EXE_CMD), .src1(y_output_src1), .src2(y_output_src1),
+    .Dest(g_Dest), .EXE_CMD(g_EXE_CMD), .src1(y_output_src1), .src2(y_output_src2),
     .Shift_operand(g_Shift_operand), 
     .flush(r_Branch_Tacken),
     .Z_in(Z), .C_in(C), .V_in(V), .N_in(N),
@@ -135,7 +139,7 @@ module ARM(input clk, rst, FORWARDING_EN);
     .S_out(r_S), .B_out(r_Branch_Tacken), .MEM_W_EN_out(r_MEM_W_EN), .MEM_R_EN_out(r_MEM_R_EN), .WB_EN_out(r_WB_EN), .imm_out(r_imm),
     .Val_Rn_out(r_Val_Rn), .Val_Rm_out(r_Val_Rm),
     .Signed_imm_24_out(r_Signed_imm_24),
-    .Dest_out(r_Dest), .EXE_CMD_out(r_EXE_CMD), .src1_out(r_output_src1), .src2_out(r_output_src2),
+    .Dest_out(r_Dest), .EXE_CMD_out(r_EXE_CMD), .src1_out(db_src1), .src2_out(db_src2),
     .Shift_operand_out(r_Shift_operand),
     .Z(exe_Z), .C(exe_C), .V(exe_V), .N(exe_N)
   );
@@ -145,6 +149,7 @@ module ARM(input clk, rst, FORWARDING_EN);
     .MEM_Dest(go_Dest), .EXE_Dest(r_Dest), .src1(y_output_src1) /*Rn Address*/, .src2(y_output_src2 /*Actually Black*/) /*Rm or Rd Address(When Mem_W)*/,
     .MEM_WB_EN(go_WB_EN), .EXE_WB_EN(r_WB_EN), .Two_src(y_Two_src),
     .EXE_CMD(bonus_EXE_CMD),  // BONUS
+    .FORWARDING_EN(FORWARDING_EN), .EXE_MEM_R_EN(r_MEM_R_EN),
     // Outputs
     .Hazard(y_Hazard)
   );
@@ -161,6 +166,9 @@ module ARM(input clk, rst, FORWARDING_EN);
     .Dest(r_Dest), .EXE_CMD(r_EXE_CMD),
     .Shift_operand(r_Shift_operand),
     .C(exe_C), .V(exe_V), .Z(exe_Z), .N(exe_N),
+    // Forward
+    .go_ALU_Res(go_ALU_Res), .b_WB_Value(b_WB_Value),
+    .Sel_src1(db_Sel_src1), .Sel_src2(db_Sel_src2),
   
   // Output
     .pc(r_pc_out),
@@ -232,6 +240,14 @@ module ARM(input clk, rst, FORWARDING_EN);
     .MEM_R_EN(b_MEM_R_EN),
     // Outputs
     .WB_Value(b_WB_Value)
+  );
+  
+  
+  Forwarding_Unit forwarding_unit(
+    .src1(db_src1), .src2(db_src2), .MEM_Dest(go_Dest), .WB_Dest(b_WB_Dest),
+    .MEM_WB_EN(go_WB_EN), .WB_WB_EN(b_WB_WB_EN), .FORWARDING_EN(FORWARDING_EN),
+    // Output
+    .Sel_src1(db_Sel_src1), .Sel_src2(db_Sel_src2)
   );
   
   

@@ -12,6 +12,9 @@ module Exe_Stage(
   input [3:0] Dest, EXE_CMD,
   input [11:0] Shift_operand,
   input C, V, Z, N,
+  // Forward
+  input [`ADDRESS_LEN - 1:0] go_ALU_Res, b_WB_Value,
+  input [1:0] Sel_src1, Sel_src2,
   
   // Output
   output MEM_W_EN_out, MEM_R_EN_out, WB_EN_out,
@@ -26,7 +29,6 @@ module Exe_Stage(
 	assign MEM_W_EN_out = MEM_W_EN;
   assign WB_EN_out = WB_EN;
 	assign Branch_Tacken_out = Branch_Tacken;
-	assign Val_Rm_out = Val_Rm;
 	assign Dest_out = Dest;
 	assign S_out = S;
 	
@@ -39,15 +41,23 @@ module Exe_Stage(
 	
 	wire [`ADDRESS_LEN - 1:0] val2;
 	
+	// Forwarding Wires
+	wire [`ADDRESS_LEN - 1:0] Val1_mux, Val2_mux;
+	assign Val_Rm_out = Val2_mux;
+	
+	Mux4 #(`WORD_LEN) Mux_1(.first(Val1), .second(go_ALU_Res), .third(b_WB_Value), .fourth(32'b0), .select(Sel_src1), .out(Val1_mux));
+	Mux4 #(`WORD_LEN) Mux_2(.first(Val_Rm), .second(go_ALU_Res), .third(b_WB_Value), .fourth(32'b0), .select(Sel_src2), .out(Val2_mux));
+	
   Val2_Generator val2_generator(
-      .Val_Rm(Val_Rm), .Shift_operand(Shift_operand), 
+      .Val_Rm(Val2_mux), .Shift_operand(Shift_operand), 
       .imm(imm), .is_mem(is_mem), 
       // Output
       .Val2(val2)
 	);
-
+  
+  
 	ALU alu(
-      .Val1(Val1), .Val2(val2), 
+      .Val1(Val1_mux), .Val2(val2), 
       .EXE_CMD(EXE_CMD), 
       .C_in(C),
       // Output

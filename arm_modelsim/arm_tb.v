@@ -2,7 +2,7 @@ module ARM_TB ();
 
   reg clk = 0, rst = 0;
 
-  ARM arm(.clk(clk), .rst(rst), .FORWARDING_EN(1'b0));
+  ARM arm(.clk(clk), .rst(rst), .FORWARDING_EN(1'b1));
 
   always #10 clk = ~clk; //50MHz
 
