@@ -10,7 +10,7 @@ WB: blue: b_*
 Hazard: yellow: y_*
 */
 
-module ARM(input clk, rst);
+module ARM(input clk, rst, FORWARDING_EN);
   
   // IF ---------- PURPLE
   wire[`ADDRESS_LEN - 1:0] p_pc_out, p_instruction;
