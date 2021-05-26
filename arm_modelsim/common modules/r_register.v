@@ -1,6 +1,6 @@
 `include "configs.v"
 
-module Regular_Register 
+module Regular_Register
 # (parameter SIZE = `ADDRESS_LEN)
 (
     output reg [SIZE - 1:0] q,

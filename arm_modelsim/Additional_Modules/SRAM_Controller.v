@@ -4,30 +4,66 @@ module SRAM_Controller(
     input clk, 
     input rst,
 
-    // Input from Memory Stage
+    // Golden Inputs
     input write_en, read_en,
     input [31:0] address,
     input [31:0] writeData,
 
-    // To WB Stage
+    // WB
     output [31:0] readData,
 
-    // To Freeze other Stages
+    // Freeze
     output ready,
 
-    ////////////////////////    SRAM Interface  ////////////////////////
-    inout [31:0] SRAM_DQ,                //  SRAM Data bus 16 Bits
-    output [16:0] SRAM_ADDR,              //  SRAM Address bus 18 Bits
-
-    // Active Low Signals
-    output SRAM_UB_N,              //  SRAM High-byte Data Mask 
-    output SRAM_LB_N,              //  SRAM Low-byte Data Mask 
-    output SRAM_WE_N,              //  SRAM Write Enable
-    output SRAM_CE_N,              //  SRAM Chip Enable
-    output SRAM_OE_N               //  SRAM Output Enable
+    // SRAM
+    inout [31:0] SRAM_DQ,
+    output [16:0] SRAM_ADDR,
+    output SRAM_UB_N,
+    output SRAM_LB_N, 
+    output SRAM_WE_N,
+    output SRAM_CE_N,
+    output SRAM_OE_N
 );
     
     assign {SRAM_UB_N, SRAM_LB_N, SRAM_CE_N, SRAM_OE_N} = 4'b0;  // Active
     
+    // Fix Address
+    wire [`ADDRESS_LEN - 1:0] address_1024;
+    wire [16:0] physical_address;
+    assign address_1024 = address - 1024;
+    assign physical_address = address_1024[17:2];  // Memory Adr Starts From 1024 and must be multiplication of 4
+    
+    // Controller Regs
+    wire[1:0] ps, ns;
+    parameter S_IDLE = 2'b00, S_READ = 2'b01, S_WRITE = 2'b10;  // States
+    Regular_Register #(.SIZE(2)) ps_reg(.q(ps), .d(ns), .clk(clk), .rst(rst));
+    
+    wire[2:0] counter, next_counter;
+    Regular_Register #(.SIZE(3)) counter_reg(.q(counter), .d(next_counter), .clk(clk), .rst(rst));
+    
+    
+    // ns Reg
+    assign ns = (ps == S_IDLE && read_en) ? S_READ :
+                (ps == S_IDLE && write_en) ? S_WRITE :
+                (ps == S_READ && counter != `SRAM_WAIT_CYCLES) ? S_READ :
+                (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? S_WRITE :
+                S_IDLE;
+    
+    // Counter
+    assign next_counter = (ps == S_READ && counter != `SRAM_WAIT_CYCLES) ? counter + 1 :
+                          (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? counter + 1 :
+                          3'b0;
+    
+    assign SRAM_ADDR = physical_address;
+    
+    assign SRAM_DQ = (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? writeData : 32'bz;
+    
+    assign SRAM_WE_N = (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? 1'b0 : 1'b1;  // 0 is Active
+    
+    assign readData = SRAM_DQ;
+    
+    assign ready = (ps == S_READ && counter != `SRAM_WAIT_CYCLES) ? 1'b0 :
+                   (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? 1'b0 :
+                   1'b1;
     
 endmodule
