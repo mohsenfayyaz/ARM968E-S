@@ -10,13 +10,13 @@ module SRAM_Controller(
     input [31:0] writeData,
 
     // WB
-    output [31:0] readData,
+    output signed [31:0] readData,
 
     // Freeze
     output ready,
-
+    
     // SRAM
-    inout [31:0] SRAM_DQ,
+    inout signed [31:0] SRAM_DQ,
     output [16:0] SRAM_ADDR,
     output SRAM_UB_N,
     output SRAM_LB_N,
@@ -64,6 +64,14 @@ module SRAM_Controller(
     
     assign ready = (ps == S_READ && counter != `SRAM_WAIT_CYCLES) ? 1'b0 :
                    (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? 1'b0 :
+                   ((ps == S_IDLE) && (read_en || write_en)) ? 1'b0 :
                    1'b1;
+    
+    always @(posedge clk) begin
+      if(read_en && counter == `SRAM_WAIT_CYCLES - 1)
+        $display("READ mem[%d] = %d", physical_address, SRAM_DQ);
+      if(write_en && counter == `SRAM_WAIT_CYCLES - 1)
+        $display("WRITE mem[%d] = %d", physical_address, SRAM_DQ);
+    end
     
 endmodule
