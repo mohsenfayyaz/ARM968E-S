@@ -82,7 +82,7 @@ module ARM(input clk, rst,
     // Inputs
     .clk(clk),
     .rst(rst), 
-    .freeze(y_Hazard),
+    .freeze(y_Hazard || SRAM_Freeze_Signal),
     .branch_taken(r_Branch_Tacken), 
     .branch_address(r_Branch_Address),
     // Outputs
@@ -94,7 +94,7 @@ module ARM(input clk, rst,
     // Inputs
     .clk(clk),
     .rst(rst), 
-    .freeze(y_Hazard),
+    .freeze(y_Hazard || SRAM_Freeze_Signal),
     .flush(r_Branch_Tacken),
     .pc_in(p_pc_out), 
     .instruction_in(p_instruction),
@@ -148,7 +148,10 @@ module ARM(input clk, rst,
     .Signed_imm_24_out(r_Signed_imm_24),
     .Dest_out(r_Dest), .EXE_CMD_out(r_EXE_CMD), .src1_out(db_src1), .src2_out(db_src2),
     .Shift_operand_out(r_Shift_operand),
-    .Z(exe_Z), .C(exe_C), .V(exe_V), .N(exe_N)
+    .Z(exe_Z), .C(exe_C), .V(exe_V), .N(exe_N),
+    
+    // SRAM
+    .freeze(SRAM_Freeze_Signal)
   );
   
   Hazard_Detection_Unit hazard_detection_unit(
@@ -199,7 +202,10 @@ module ARM(input clk, rst,
     .pc(go_pc),
     .MEM_W_EN_out(go_MEM_W_EN), .MEM_R_EN_out(go_MEM_R_EN), .WB_EN_out(go_WB_EN),
     .ALU_Res_out(go_ALU_Res), .Val_Rm_out(go_Val_Rm),
-    .Dest_out(go_Dest)
+    .Dest_out(go_Dest),
+    
+    // SRAM
+    .freeze(SRAM_Freeze_Signal)
   );
   
   Status_Register status_register(
@@ -240,7 +246,10 @@ module ARM(input clk, rst,
     .ALU_Res_out(b_ALU_Res),
     .memory_reg_out(b_memory_out),
     .MEM_R_EN_out(b_MEM_R_EN), .WB_EN_out(b_WB_WB_EN),
-    .Dest_out(b_WB_Dest)
+    .Dest_out(b_WB_Dest),
+    
+    // SRAM
+    .freeze(SRAM_Freeze_Signal)
   );
   
   WB_Stage wb_stage(

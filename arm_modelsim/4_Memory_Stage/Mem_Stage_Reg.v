@@ -13,14 +13,17 @@ module Mem_Stage_Reg(
   output [`ADDRESS_LEN - 1:0] ALU_Res_out,
   output [`WORD_LEN - 1:0] memory_reg_out,
   output MEM_R_EN_out,WB_EN_out,
-  output [3:0] Dest_out
+  output [3:0] Dest_out,
+  
+  // SRAM
+  input freeze
 );
   
-  Flushable_Freezable_Register #(`ADDRESS_LEN) pc_reg (.q(pc), .d(pc_in), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
-  Flushable_Freezable_Register #(`ADDRESS_LEN) ALU_Res_reg(.q(ALU_Res_out), .d(ALU_Res), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
-  Flushable_Freezable_Register #(`WORD_LEN) memory_out_reg(.q(memory_reg_out), .d(memory_out), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
-  Flushable_Freezable_Register #(1) MEM_R_EN_reg(.q(MEM_R_EN_out), .d(MEM_R_EN), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
-  Flushable_Freezable_Register #(1) WB_EN_reg(.q(WB_EN_out), .d(WB_EN), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
-  Flushable_Freezable_Register #(4) Dest_reg(.q(Dest_out), .d(Dest), .clk(clk), .rst(rst), .freeze(1'b0), .flush(1'b0));
+  Flushable_Freezable_Register #(`ADDRESS_LEN) pc_reg (.q(pc), .d(pc_in), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
+  Flushable_Freezable_Register #(`ADDRESS_LEN) ALU_Res_reg(.q(ALU_Res_out), .d(ALU_Res), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
+  Flushable_Freezable_Register #(`WORD_LEN) memory_out_reg(.q(memory_reg_out), .d(memory_out), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
+  Flushable_Freezable_Register #(1) MEM_R_EN_reg(.q(MEM_R_EN_out), .d(MEM_R_EN), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
+  Flushable_Freezable_Register #(1) WB_EN_reg(.q(WB_EN_out), .d(WB_EN), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
+  Flushable_Freezable_Register #(4) Dest_reg(.q(Dest_out), .d(Dest), .clk(clk), .rst(rst), .freeze(freeze), .flush(1'b0));
   
 endmodule
