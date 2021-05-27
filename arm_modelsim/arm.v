@@ -11,7 +11,9 @@ Hazard: yellow: y_*
 Forwarding: dark blue: db_*
 */
 
-module ARM(input clk, rst, FORWARDING_EN);
+module ARM(input clk, rst,
+           input FORWARDING_EN,
+           output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ);
   
   // IF ---------- PURPLE
   wire[`ADDRESS_LEN - 1:0] p_pc_out, p_instruction;
@@ -27,7 +29,7 @@ module ARM(input clk, rst, FORWARDING_EN);
   wire [11:0] g_Shift_operand;
  
  
-// Status Reg ---------- No Name Color!
+  // Status Reg ---------- No Name Color!
   wire Z, C, V, N;  // Status Reg Outputs
   wire Z_in, C_in, V_in, N_in;  // Status Reg Inputs
   wire exe_Z, exe_C, exe_V, exe_N;  // In exe after ID regs (black)
@@ -70,6 +72,11 @@ module ARM(input clk, rst, FORWARDING_EN);
   // Forwarding --------- Dark Blue
   wire [3:0] db_src1, db_src2;
   wire [1:0] db_Sel_src1, db_Sel_src2;
+  
+  // SRAM
+  wire SRAM_ready;
+  wire SRAM_Freeze_Signal;
+  assign SRAM_Freeze_Signal = ~SRAM_ready;
   
   IF_Stage if_stage(
     // Inputs
@@ -214,7 +221,10 @@ module ARM(input clk, rst, FORWARDING_EN);
     
     // Outputs
     .pc(go_pc_out),
-    .memory_out(go_memory_out)
+    .memory_out(go_memory_out),
+    
+    // SRAM
+    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .SRAM_ready(SRAM_ready)
   );
   
   Mem_Stage_Reg mem_stage_reg(

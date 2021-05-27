@@ -19,7 +19,7 @@ module SRAM_Controller(
     inout [31:0] SRAM_DQ,
     output [16:0] SRAM_ADDR,
     output SRAM_UB_N,
-    output SRAM_LB_N, 
+    output SRAM_LB_N,
     output SRAM_WE_N,
     output SRAM_CE_N,
     output SRAM_OE_N
