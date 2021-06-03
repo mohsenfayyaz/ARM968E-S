@@ -20,15 +20,21 @@ module Cache_Controller(
   
   output sram_write_en,
   output sram_read_en,
-  input [63:0] sram_read_data, 
+  input [31:0] sram_read_data, 
   input sram_ready
 );
 
   wire [18:0] cache_address;
+  
+  wire [31:0] address_1024;
+  assign address_1024 = address - 1024;
+  assign cache_address = address_1024[19:2] // not sure about this ?????????????????
+  
   wire [63:0] cache_write_data;
   wire [31:0] cache_read_data;
   wire cache_write_en, cache_read_en, cache_invoke;
   wire cache_hit;
+  wire sram_second_ready;
   
   Cache cache(
     .clk(clk), .rst(rst),
@@ -45,27 +51,56 @@ module Cache_Controller(
   
   // Controller Regs
   wire[2:0] ps, ns;
-  parameter S_IDLE = 3'b000, S_CACHE_READ = 3'b001, S_SRAM_READ = 3'b010, S_SRAM_WRITE = 3'b011, S_CACHE_WRITE = 3'b100; // States
-  Regular_Register #(.SIZE(2)) ps_reg(.q(ps), .d(ns), .clk(clk), .rst(rst));    
+  parameter S_IDLE = 3'b000, S_CACHE_READ = 3'b001, S_SRAM_READ_1 = 3'b010, S_SRAM_READ_2 = 3'b011, S_SRAM_WRITE = 3'b100, S_CACHE_WRITE = 3'b101; // States
+  Regular_Register #(.SIZE(3)) ps_reg(.q(ps), .d(ns), .clk(clk), .rst(rst));    
     
     
     // ns Reg
   assign ns = (ps == S_IDLE && MEM_R_EN) ? S_CACHE_READ :
-              (ps == S_CACHE_READ && ~cache_hit) ? S_SRAM_READ :
-              (ps == S_SRAM_READ && ~sram_ready) ? S_SRAM_READ :
-              (ps == S_SRAM_READ && sram_ready) ? S_CACHE_WRITE :
+              (ps == S_CACHE_READ && ~cache_hit) ? S_SRAM_READ_1 :
+              (ps == S_CACHE_READ && cache_hit) ? S_IDLE :
+              (ps == S_SRAM_READ_1 && sram_ready) ? S_SRAM_READ_2 :
+              (ps == S_SRAM_READ_2 && sram_ready) ? S_CACHE_WRITE :
               (ps == S_CACHE_WRITE) ? S_IDLE :
               (ps == S_IDLE && MEM_W_EN) ? S_SRAM_WRITE :
-              S_IDLE;
-    
+              (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE // not sure about this
+              ps;
+  assign 
+              
+  assign sram_second_ready = (ps == S_SRAM_READ_2) && sram_ready
+   
+  assign rdata = cache_hit ? cache_read_data :
+                 sram_second_ready ? cache_write_data[63:32];
+                 
+  assign ready = cache_hit || sram_second_ready;
   
-    
- // always @(posedge clk) begin
-  //  if(read_en && counter == `SRAM_WAIT_CYCLES - 1)
-   //   $display("READ mem[%d] = %d", physical_address, SRAM_DQ);
-   // if(write_en && counter == `SRAM_WAIT_CYCLES - 1)
-    //  $display("WRITE mem[%d] = %d", physical_address, SRAM_DQ);
- // end
+  assign sram_address = (ps == S_SRAM_READ_1) ? address :
+                        (ps == S_SRAM_READ_2) ? address + 4 :
+                        sram_address; // not sure about the default address
   
+  assign sram_write_data = (ps == S_SRAM_WRITE) ? writeData : 
+                            sram_write_data; // not sure about the default value
+  
+  assign sram_write_en = (ps == S_SRAM_WRITE) ? 1'b1 : 
+                         1'b0; //
+                         
+  assign sram_read_en = (ps == S_SRAM_READ_1 || ps == S_SRAM_READ_2) ? 1'b1 :
+                        1'b0; //
+  
+  assign cache_write_data[63:32] = (ps == S_SRAM_READ_1 && sram_ready) ? sram_read_data: 
+                                   cache_write_data[63:32];     //
 
+  assign cache_write_data[31:0] = (ps == S_SRAM_READ_2 && sram_ready) ? sram_read_data: 
+                                   cache_write_data[31:0];      //
+  
+  assign cache_read_en = (ps == S_CACHE_READ) ? 1'b1 : 
+                         1'b0;
+  assign cache_write_en = (ps == S_CACHE_WRITE) ? 1'b1 :
+                          1'b0;
+  
+  assign cache_invoke = (ps == S_SRAM_WRITE) ? 1'b1 :
+                        1'b0;
+  
+                       
+             
 endmodule
