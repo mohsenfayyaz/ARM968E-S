@@ -78,6 +78,13 @@ module Cache(
     end
   end
   
+  always @(*) begin
+    if (write_en) begin
+      data_set_1[~lru[index]][index] = write_data;
+      lru[index] = ~lru[index];
+    end
+  end
+  
   
   
 endmodule
