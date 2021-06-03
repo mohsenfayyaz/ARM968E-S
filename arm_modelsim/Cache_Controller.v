@@ -28,7 +28,7 @@ module Cache_Controller(
   
   wire [31:0] address_1024;
   assign address_1024 = address - 1024;
-  assign cache_address = address_1024[19:2] // not sure about this ?????????????????
+  assign cache_address = address_1024[19:2]; // not sure about this ?????????????????
   
   wire [63:0] cache_write_data;
   wire [31:0] cache_read_data;
@@ -63,14 +63,14 @@ module Cache_Controller(
               (ps == S_SRAM_READ_2 && sram_ready) ? S_CACHE_WRITE :
               (ps == S_CACHE_WRITE) ? S_IDLE :
               (ps == S_IDLE && MEM_W_EN) ? S_SRAM_WRITE :
-              (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE // not sure about this
-              ps;
-  assign 
+              (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE :// not sure about this
+              ps; 
               
-  assign sram_second_ready = (ps == S_SRAM_READ_2) && sram_ready
+  assign sram_second_ready = (ps == S_SRAM_READ_2) && sram_ready;
    
   assign rdata = cache_hit ? cache_read_data :
-                 sram_second_ready ? cache_write_data[63:32];
+                 sram_second_ready ? cache_write_data[63:32] :
+                 32'bz; // ???
                  
   assign ready = cache_hit || sram_second_ready;
   

@@ -1,7 +1,7 @@
 module Cache(
   input clk, rst,
   input [18:0] address,
-  input [31:0] write_data,
+  input [63:0] write_data,
   
   input read_en,
   input write_en,
@@ -80,8 +80,16 @@ module Cache(
   
   always @(*) begin
     if (write_en) begin
-      data_set_1[~lru[index]][index] = write_data;
-      lru[index] = ~lru[index];
+      if (lru[index] == 1'b0) begin
+        data_set_2[1][index] = write_data[63:32];
+        data_set_2[0][index] = write_data[31:0];
+        lru[index] = 1'b1;
+      end
+      else if (lru[index] == 1'b1) begin
+        data_set_1[1][index] = write_data[63:32];
+        data_set_1[0][index] = write_data[31:0];
+        lru[index] = 1'b0;
+      end
     end
   end
   
