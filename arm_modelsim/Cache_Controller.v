@@ -24,4 +24,48 @@ module Cache_Controller(
   input sram_ready
 );
 
+  wire [18:0] cache_address;
+  wire [63:0] cache_write_data;
+  wire [31:0] cache_read_data;
+  wire cache_write_en, cache_read_en, cache_invoke;
+  wire cache_hit;
+  
+  Cache cache(
+    .clk(clk), .rst(rst),
+    .address(cache_address),
+    .write_data(cache_write_data),
+  
+    .read_en(cache_read_en),
+    .write_en(cache_write_en),
+    .invoke_set(cache_invoke),
+  
+    .read_data(cache_read_data),
+    .hit(cache_hit)
+  );
+  
+  // Controller Regs
+  wire[2:0] ps, ns;
+  parameter S_IDLE = 3'b000, S_CACHE_READ = 3'b001, S_SRAM_READ = 3'b010, S_SRAM_WRITE = 3'b011, S_CACHE_WRITE = 3'b100; // States
+  Regular_Register #(.SIZE(2)) ps_reg(.q(ps), .d(ns), .clk(clk), .rst(rst));    
+    
+    
+    // ns Reg
+  assign ns = (ps == S_IDLE && MEM_R_EN) ? S_CACHE_READ :
+              (ps == S_CACHE_READ && ~cache_hit) ? S_SRAM_READ :
+              (ps == S_SRAM_READ && ~sram_ready) ? S_SRAM_READ :
+              (ps == S_SRAM_READ && sram_ready) ? S_CACHE_WRITE :
+              (ps == S_CACHE_WRITE) ? S_IDLE :
+              (ps == S_IDLE && MEM_W_EN) ? S_SRAM_WRITE :
+              S_IDLE;
+    
+  
+    
+ // always @(posedge clk) begin
+  //  if(read_en && counter == `SRAM_WAIT_CYCLES - 1)
+   //   $display("READ mem[%d] = %d", physical_address, SRAM_DQ);
+   // if(write_en && counter == `SRAM_WAIT_CYCLES - 1)
+    //  $display("WRITE mem[%d] = %d", physical_address, SRAM_DQ);
+ // end
+  
+
 endmodule
