@@ -18,7 +18,8 @@ module Cache_Controller(
   output [31:0] sram_address,
   output [31:0] sram_write_data,
   
-  output write,
+  output sram_write_en,
+  output sram_read_en,
   input [63:0] sram_read_data, 
   input sram_ready
 );
