@@ -5,6 +5,7 @@ module Cache(
   
   input read_en,
   input write_en,
+  input invoke_set,
   
   output [31:0] read_data,
   output hit
@@ -63,10 +64,20 @@ module Cache(
   // modifying the lru bit upon reading a set
   always @(*) begin
     if (read_en)
-      lru[index] = set_1_hit_result ? 1'b1: 1'b0;
+      lru[index] = set_1_hit_result ? 1'b0: 1'b1; // 0 for the first set and 1 for the second set
     else
       lru[index] = lru[index];
   end
+  
+  always @(*) begin
+    if (invoke_set && hit) begin
+      if (set_1_hit_result == 1'b1)
+        valid_set_1[index] = 1'b0;
+      else if(set_2_hit_result == 1'b1)
+        valid_set_2[index] = 1'b0;
+    end
+  end
+  
   
   
 endmodule
