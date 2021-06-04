@@ -24,11 +24,11 @@ module Cache_Controller(
   input sram_ready
 );
 
-  wire [18:0] cache_address;
+  wire [16:0] cache_address;
   
   wire [31:0] address_1024;
   assign address_1024 = address - 1024;
-  assign cache_address = address_1024[19:2]; // not sure about this ?????????????????
+  assign cache_address = address_1024[17:2]; // not sure about this ?????????????????
   
   wire [63:0] cache_write_data;
   wire [31:0] cache_read_data;
@@ -43,7 +43,7 @@ module Cache_Controller(
   
     .read_en(cache_read_en),
     .write_en(cache_write_en),
-    .invoke_set(cache_invoke),
+    .invoke_set_en(cache_invoke),
   
     .read_data(cache_read_data),
     .hit(cache_hit)
@@ -61,46 +61,37 @@ module Cache_Controller(
               (ps == S_CACHE_READ && cache_hit) ? S_IDLE :
               (ps == S_SRAM_READ_1 && sram_ready) ? S_SRAM_READ_2 :
               (ps == S_SRAM_READ_2 && sram_ready) ? S_CACHE_WRITE :
-              (ps == S_CACHE_WRITE) ? S_IDLE :
+              (ps == S_CACHE_WRITE) ? S_CACHE_READ :
               (ps == S_IDLE && MEM_W_EN) ? S_SRAM_WRITE :
-              (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE :// not sure about this
+              (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE :
               ps; 
               
   assign sram_second_ready = (ps == S_SRAM_READ_2) && sram_ready;
    
-  assign rdata = cache_hit ? cache_read_data :
-                 sram_second_ready ? cache_write_data[63:32] :
-                 32'bz; // ???
+  assign rdata = (ps == S_CACHE_READ && cache_hit) ? cache_read_data :
+                 32'bz;
                  
-  assign ready = cache_hit || sram_second_ready;
+  assign ready = ((ps == S_IDLE) && (MEM_R_EN || MEM_W_EN)) ? 1'b0 :
+                  (ps == S_SRAM_WRITE && sram_ready == 1'b1) ? 1'b1 :
+                  (ps == S_CACHE_READ && cache_hit) || (ps == S_IDLE);
   
-  assign sram_address = (ps == S_SRAM_READ_1) ? address :
-                        (ps == S_SRAM_READ_2) ? address + 4 :
-                        sram_address; // not sure about the default address
+  assign sram_address = (ps == S_SRAM_READ_1) ? {address[31:3], 1'b0, address[1:0]} :
+                        (ps == S_SRAM_READ_2) ? {address[31:3], 1'b1, address[1:0]} :
+                        (ps == S_SRAM_WRITE) ? address :
+                        32'bz;
   
   assign sram_write_data = (ps == S_SRAM_WRITE) ? writeData : 
-                            sram_write_data; // not sure about the default value
+                            32'bz;
   
-  assign sram_write_en = (ps == S_SRAM_WRITE) ? 1'b1 : 
-                         1'b0; //
+  assign sram_write_en = (ps == S_SRAM_WRITE);
                          
-  assign sram_read_en = (ps == S_SRAM_READ_1 || ps == S_SRAM_READ_2) ? 1'b1 :
-                        1'b0; //
+  assign sram_read_en = (ps == S_SRAM_READ_1 || ps == S_SRAM_READ_2);
   
-  assign cache_write_data[63:32] = (ps == S_SRAM_READ_1 && sram_ready) ? sram_read_data: 
-                                   cache_write_data[63:32];     //
-
-  assign cache_write_data[31:0] = (ps == S_SRAM_READ_2 && sram_ready) ? sram_read_data: 
-                                   cache_write_data[31:0];      //
+  Freezable_Register #(.SIZE(32)) cache_write_data_reg0(.q(cache_write_data[31:0]), .d(sram_read_data), .freeze(~(ps == S_SRAM_READ_1 && sram_ready)), .clk(clk), .rst(rst));
+  Freezable_Register #(.SIZE(32)) cache_write_data_reg1(.q(cache_write_data[63:32]), .d(sram_read_data), .freeze(~(ps == S_SRAM_READ_2 && sram_ready)), .clk(clk), .rst(rst)); 
   
-  assign cache_read_en = (ps == S_CACHE_READ) ? 1'b1 : 
-                         1'b0;
-  assign cache_write_en = (ps == S_CACHE_WRITE) ? 1'b1 :
-                          1'b0;
-  
-  assign cache_invoke = (ps == S_SRAM_WRITE) ? 1'b1 :
-                        1'b0;
-  
-                       
+  assign cache_read_en = (ps == S_CACHE_READ);
+  assign cache_write_en = (ps == S_CACHE_WRITE);
+  assign cache_invoke = (ps == S_SRAM_WRITE);
              
 endmodule

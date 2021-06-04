@@ -15,7 +15,7 @@ module SRAM(
 
     always @(posedge CLK) begin
         if(~SRAM_WE_N) begin
-            // $display("WRITE mem[%d] = %d", SRAM_ADDR, SRAM_DQ);
+            $display("SRAM WRITE mem[%d] = %d", SRAM_ADDR, SRAM_DQ);
             memory[SRAM_ADDR] <= SRAM_DQ;  // write in SRAM
         end
     end

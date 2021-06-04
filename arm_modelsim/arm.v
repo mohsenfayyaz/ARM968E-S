@@ -230,7 +230,7 @@ module ARM(input clk, rst,
     .memory_out(go_memory_out),
     
     // SRAM
-    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .SRAM_ready(SRAM_ready)
+    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .CACHE_SRAM_ready(SRAM_ready)
   );
   
   Mem_Stage_Reg mem_stage_reg(

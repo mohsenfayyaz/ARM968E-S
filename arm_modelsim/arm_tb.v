@@ -14,7 +14,7 @@ module ARM_TB ();
   );
   
   generate
-    if(`USE_SRAM)
+    if(`USE_SRAM || `USE_CACHE)
       SRAM sram(
         .CLK(sram_clk), .RST(rst),
         .SRAM_WE_N(SRAM_WE_N),

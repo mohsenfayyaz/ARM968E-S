@@ -10,7 +10,7 @@ module Mem_Stage(
   input [`WORD_LEN - 1:0] Val_Rm,
   output [`WORD_LEN - 1:0] memory_out,
   
-  output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ, output SRAM_ready  // SRAM BUS & Control Signals
+  output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ, output CACHE_SRAM_ready  // SRAM BUS & Control Signals
   //output read // cache ready 
 );
   
@@ -38,7 +38,7 @@ module Mem_Stage(
         .readData(memory_out),
 
         // Freeze
-        .ready(SRAM_ready),
+        .ready(CACHE_SRAM_ready),
 
         // SRAM
         .SRAM_DQ(SRAM_DQ),
@@ -80,7 +80,7 @@ module Mem_Stage(
         .MEM_R_EN(MEM_R_EN),
         .MEM_W_EN(MEM_W_EN),
         .rdata(memory_out),
-        .ready(ready), 
+        .ready(CACHE_SRAM_ready), 
         .sram_address(sram_address),
         .sram_write_data(sram_write_data),
         .sram_write_en(sram_write_en),
