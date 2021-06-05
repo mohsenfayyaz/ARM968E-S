@@ -97,7 +97,7 @@ module Mem_Stage(
         .Val_Rm(Val_Rm),  // Writing Value
         .out(memory_out)
       );
-      assign SRAM_ready = 1'b1;
+      assign CACHE_SRAM_ready = 1'b1;
     end
   endgenerate
   
