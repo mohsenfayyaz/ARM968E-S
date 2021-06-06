@@ -7,19 +7,27 @@ module ARM_TB ();
   wire SRAM_WE_N;
   wire [16:0] SRAM_ADDR;
   wire [31:0] SRAM_DQ;
+  wire [63:0] SRAM_DQ64;
   
   ARM arm(.clk(clk), .rst(rst), .FORWARDING_EN(1'b1),
     // SRAM
-    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ)
+    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .SRAM_DQ64(SRAM_DQ64)
   );
   
   generate
-    if(`USE_SRAM || `USE_CACHE)
+    if(`USE_SRAM)
       SRAM sram(
         .CLK(sram_clk), .RST(rst),
         .SRAM_WE_N(SRAM_WE_N),
         .SRAM_ADDR(SRAM_ADDR),  //  17 Bits
         .SRAM_DQ(SRAM_DQ)  //  Data 32 Bits
+      );
+    else if(`USE_CACHE)
+      SRAM64 sram64(
+        .CLK(sram_clk), .RST(rst),
+        .SRAM_WE_N(SRAM_WE_N),
+        .SRAM_ADDR(SRAM_ADDR),  //  17 Bits
+        .SRAM_DQ(SRAM_DQ64)  //  Data 64 Bits
       );
   endgenerate
 

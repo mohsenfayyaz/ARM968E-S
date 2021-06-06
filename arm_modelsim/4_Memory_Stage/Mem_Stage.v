@@ -10,7 +10,7 @@ module Mem_Stage(
   input [`WORD_LEN - 1:0] Val_Rm,
   output [`WORD_LEN - 1:0] memory_out,
   
-  output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ, output CACHE_SRAM_ready  // SRAM BUS & Control Signals
+  output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ, inout [63:0] SRAM_DQ64, output CACHE_SRAM_ready  // SRAM BUS & Control Signals
   //output read // cache ready 
 );
   
@@ -21,7 +21,8 @@ module Mem_Stage(
   wire [31:0] sram_write_data;
 
   wire sram_write_en, sram_read_en;
-  wire [31:0] sram_read_data; 
+  wire [31:0] sram_read_data;
+  wire [63:0] sram_read_data64; 
   wire sram_read;
   
   generate
@@ -50,22 +51,22 @@ module Mem_Stage(
         .SRAM_OE_N(SRAM_ignored_signals[3])
       );
     else if(`USE_CACHE) begin
-      SRAM_Controller sram_controller(
+      SRAM_Controller64 sram_controller64(
         .clk(clk), .rst(rst),
 
         // Golden Inputs
-        .write_en(sram_write_en), .read_en(sram_read_en), // ???????
+        .write_en(sram_write_en), .read_en(sram_read_en),
         .address(sram_address),
         .writeData(sram_write_data),
 
         // WB
-        .readData(sram_read_data),
+        .readData(sram_read_data64),
 
         // Freeze
         .ready(sram_ready),
 
         // SRAM
-        .SRAM_DQ(SRAM_DQ),
+        .SRAM_DQ(SRAM_DQ64),
         .SRAM_ADDR(SRAM_ADDR),
         .SRAM_UB_N(SRAM_ignored_signals[0]),
         .SRAM_LB_N(SRAM_ignored_signals[1]),
@@ -85,7 +86,7 @@ module Mem_Stage(
         .sram_write_data(sram_write_data),
         .sram_write_en(sram_write_en),
         .sram_read_en(sram_read_en),
-        .sram_read_data(sram_read_data), 
+        .sram_read_data(sram_read_data64), 
         .sram_ready(sram_ready)
       );
     end

@@ -13,7 +13,7 @@ Forwarding: dark blue: db_*
 
 module ARM(input clk, rst,
            input FORWARDING_EN,
-           output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ);
+           output SRAM_WE_N, output [16:0] SRAM_ADDR, inout [31:0] SRAM_DQ, inout [63:0] SRAM_DQ64);
   
   // IF ---------- PURPLE
   wire[`ADDRESS_LEN - 1:0] p_pc_out, p_instruction;
@@ -230,7 +230,7 @@ module ARM(input clk, rst,
     .memory_out(go_memory_out),
     
     // SRAM
-    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .CACHE_SRAM_ready(SRAM_ready)
+    .SRAM_WE_N(SRAM_WE_N), .SRAM_ADDR(SRAM_ADDR), .SRAM_DQ(SRAM_DQ), .SRAM_DQ64(SRAM_DQ64), .CACHE_SRAM_ready(SRAM_ready)
   );
   
   Mem_Stage_Reg mem_stage_reg(

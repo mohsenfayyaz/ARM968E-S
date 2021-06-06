@@ -1,7 +1,7 @@
 `include "configs.v"
 
 module SRAM_Controller64(
-    input clk, 
+    input clk,
     input rst,
 
     // Golden Inputs

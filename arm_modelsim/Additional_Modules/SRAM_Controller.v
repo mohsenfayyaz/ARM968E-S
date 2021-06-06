@@ -56,7 +56,7 @@ module SRAM_Controller(
     
     assign SRAM_ADDR = physical_address;
     
-    assign SRAM_DQ = (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? writeData : 32'bz;
+    assign SRAM_DQ = (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? {32'b0, writeData} : 64'bz;
     
     assign SRAM_WE_N = (ps == S_WRITE && counter != `SRAM_WAIT_CYCLES) ? 1'b0 : 1'b1;  // 0 is Active
     
