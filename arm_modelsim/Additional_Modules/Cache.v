@@ -65,23 +65,23 @@ module Cache(
   );
   
   // modifying the lru bit upon reading a set
-  always @(*) begin
+  always @(posedge clk) begin
     if (read_en && hit)
-      lru[index] = set_1_hit_result ? 1'b0: 1'b1; // 0 for the first set and 1 for the second set
+      lru[index] <= set_1_hit_result ? 1'b0: 1'b1; // 0 for the first set and 1 for the second set
     else
-      lru[index] = lru[index];
+      lru[index] <= lru[index];
   end
   
   // Invalidation
-  always @(*) begin
+  always @(posedge clk) begin
     if (invoke_set_en && hit) begin
       if (set_1_hit_result == 1'b1) begin
-        valid_set_0[index] = 1'b0;
-        lru[index] = 1'b1;
+        valid_set_0[index] <= 1'b0;
+        lru[index] <= 1'b1;
       end
       else if(set_2_hit_result == 1'b1) begin
-        valid_set_1[index] = 1'b0;
-        lru[index] = 1'b0;
+        valid_set_1[index] <= 1'b0;
+        lru[index] <= 1'b0;
       end
     end
   end

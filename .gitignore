@@ -24,3 +24,7 @@ arm_quartus/incremental_db/compiled_partitions/
 arm_quartus/incremental_db/
 
 arm_quartus/output_files/
+
+*.qws
+
+arm_modelsim/transcript
