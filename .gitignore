@@ -8,3 +8,19 @@ arm_modelsim/work/
 *.bak
 
 *.wlf
+
+arm_quartus/.qsys_edit/
+
+*.dpf
+
+*.qpf
+
+*.qsf
+
+arm_quartus/db/
+
+arm_quartus/incremental_db/compiled_partitions/
+
+arm_quartus/incremental_db/
+
+arm_quartus/output_files/
