@@ -52,13 +52,15 @@ module Cache_Controller(
   // Controller Regs
   wire[2:0] ps, ns;
   //parameter S_IDLE = 3'b000, S_CACHE_READ = 3'b001, S_SRAM_READ_1 = 3'b010, S_SRAM_READ_2 = 3'b011, S_SRAM_WRITE = 3'b100, S_CACHE_WRITE = 3'b101; // States
-  parameter S_IDLE = 3'b000, S_SRAM_READ_CACHE_WRITE = 3'b001, S_SRAM_WRITE = 3'b010;
+  parameter S_IDLE = 3'b000, S_SRAM_READ_CACHE_WRITE = 3'b001, S_SRAM_WRITE = 3'b010, S_INVOKE_CACHE = 3'b011;
   Regular_Register #(.SIZE(3)) ps_reg(.q(ps), .d(ns), .clk(clk), .rst(rst));    
     
     
   // ns Reg
   assign ns = (ps == S_IDLE && MEM_R_EN && ~cache_hit) ? S_SRAM_READ_CACHE_WRITE :
               (ps == S_IDLE && MEM_W_EN) ? S_SRAM_WRITE :
+              //(ps == S_IDLE && MEM_W_EN) ? S_INVOKE_CACHE :
+              //(ps == S_INVOKE_CACHE) ? S_SRAM_WRITE :
               (ps == S_SRAM_READ_CACHE_WRITE && sram_ready) ? S_IDLE :
               (ps == S_SRAM_WRITE && sram_ready) ? S_IDLE :
               ps; 
@@ -95,6 +97,6 @@ module Cache_Controller(
   
   assign cache_read_en = (ps == S_IDLE);
   assign cache_write_en = (ps == S_SRAM_READ_CACHE_WRITE && sram_ready);
-  assign cache_invoke = (ps == S_SRAM_WRITE);
+  assign cache_invoke = (ps == S_IDLE && ns == S_SRAM_WRITE);
              
 endmodule
