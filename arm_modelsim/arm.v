@@ -27,6 +27,8 @@ module ARM(input clk, rst,
   wire [23:0] g_Signed_imm_24;
   wire [3:0] g_Dest;
   wire [11:0] g_Shift_operand;
+  // EXAM
+  wire g_cycle_freeze;
  
  
   // Status Reg ---------- No Name Color!
@@ -82,7 +84,7 @@ module ARM(input clk, rst,
     // Inputs
     .clk(clk),
     .rst(rst), 
-    .freeze(y_Hazard || SRAM_Freeze_Signal),
+    .freeze(y_Hazard || SRAM_Freeze_Signal || g_cycle_freeze),
     .branch_taken(r_Branch_Tacken), 
     .branch_address(r_Branch_Address),
     // Outputs
@@ -94,7 +96,7 @@ module ARM(input clk, rst,
     // Inputs
     .clk(clk),
     .rst(rst), 
-    .freeze(y_Hazard || SRAM_Freeze_Signal),
+    .freeze(y_Hazard || SRAM_Freeze_Signal || g_cycle_freeze),
     .flush(r_Branch_Tacken),
     .pc_in(p_pc_out), 
     .instruction_in(p_instruction),
@@ -127,7 +129,10 @@ module ARM(input clk, rst,
     .Dest(g_Dest), 
     .Shift_operand(g_Shift_operand),
     .Two_src(y_Two_src),
-    .output_src1(y_output_src1), .output_src2(y_output_src2 /*Actually Black*/)
+    .output_src1(y_output_src1), .output_src2(y_output_src2 /*Actually Black*/),
+    
+    // EXAM
+    .cycle_freeze(g_cycle_freeze)
   );
   
   ID_Stage_Reg id_stage_reg(

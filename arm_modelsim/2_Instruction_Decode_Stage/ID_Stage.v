@@ -28,7 +28,10 @@ module ID_Stage(
   output [11:0] Shift_operand,
   // Yellow
   output Two_src,
-  output [3:0] output_src1 /*Rn For Hazard*/, output_src2 /*Rm or Rd (When Mem_W)*/
+  output [3:0] output_src1 /*Rn For Hazard*/, output_src2 /*Rm or Rd (When Mem_W)*/,
+  
+  // EXAM
+  output cycle_freeze
 );
   
   wire[1:0] mode;
@@ -49,7 +52,12 @@ module ID_Stage(
   
   assign Two_src = ~imm | mem_write;
   assign control_unit_mux_select = ~cond_check | Hazard;
-  assign Dest = Rd;
+  
+  //assign Dest = Rd;
+  // EXAM
+  wire cycle_counter;
+  assign Dest = (cycle_counter == 1'b1) ? Rd + 1 : Rd;
+  
   assign Shift_operand = instruction[11:0];
   assign Signed_imm_24 = instruction[23:0];
   
@@ -73,7 +81,14 @@ module ID_Stage(
     .mem_write(mem_write),
     .wb_en(wb_en),
     .branch(branch),
-    .status_update(status_update)
+    .status_update(status_update),
+    
+    // EXAM
+    .clk(clk),
+    .rst(rst),
+    .hazard(Hazard),
+    .cycle_freeze(cycle_freeze),
+    .cycle_counter(cycle_counter)
   );
 
   Condition_Check condition_check

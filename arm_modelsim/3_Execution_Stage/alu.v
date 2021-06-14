@@ -11,7 +11,9 @@ module ALU(
 
   assign Z = &{~{ALU_Res}};
   assign N = ALU_Res[31];
-
+  
+  reg [63:0] mul64;
+  
   always@(*) begin
     {ALU_Res, C, V} = 0; 
     case(EXE_CMD)
@@ -56,6 +58,16 @@ module ALU(
         4'b0010: begin // LDR/STR
             {C, ALU_Res} = {Val1[31], Val1} + {Val2[31], Val2};
             V = C ^ ALU_Res[31];
+        end
+        4'b1100: begin // MUL1
+          //mul64 = Val1 * Val2;
+          //ALU_Res = mul64[31:0];
+          ALU_Res = Val1 / Val2;
+        end
+        4'b1101: begin // MUL2
+          //mul64 = Val1 * Val2;
+          //ALU_Res = mul64[63:32];
+          ALU_Res = Val1 % Val2;
         end
     endcase
     //$display("Mohsen: ALU %d,%d,%d = %d,%d", Val1, Val2, C_in, ALU_Res, C);
