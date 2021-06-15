@@ -99,19 +99,20 @@ module ID_Stage(
   
   assign BEFORE_MUX_EXE_CMD = exe_cmd;
   
-  wire wb_en_before_add32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, B_before_add32;
+  wire wb_en_before_add32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, B_before_add32, S_before_add32;
   wire [3:0] EXE_CMD_BERFORE_ADD32;
   assign EXE_CMD = (ADD32_STATE == 2'b10) ? 4'b0010 : EXE_CMD_BERFORE_ADD32;
   assign WB_EN = (ADD32_STATE == 2'b10) ? 1'b1 : wb_en_before_add32;
-  assign MEM_W_EN = (ADD32_STATE == 1'b10) ? 1'b0 : MEM_W_EN_before_add32;
-  assign MEM_R_EN = (ADD32_STATE == 1'b10) ? 1'b0 : MEM_R_EN_before_add32;
-  assign B = (ADD32_STATE == 1'b10) ? 1'b0 : B_before_add32;
+  assign MEM_W_EN = (ADD32_STATE == 2'b10) ? 1'b0 : MEM_W_EN_before_add32;
+  assign MEM_R_EN = (ADD32_STATE == 2'b10) ? 1'b0 : MEM_R_EN_before_add32;
+  assign B = (ADD32_STATE == 2'b10) ? 1'b0 : B_before_add32;
+  assign S = (ADD32_STATE == 2'b10) ? 1'b0 : S_before_add32;
   Mux #(.WIDTH(9)) src1_mux
   (
     .first({status_update, branch, exe_cmd, mem_write,  mem_read, wb_en}),
     .second(9'b0),
     .select(control_unit_mux_select),
-    .out({S, B_before_add32, EXE_CMD_BERFORE_ADD32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, wb_en_before_add32})
+    .out({S_before_add32, B_before_add32, EXE_CMD_BERFORE_ADD32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, wb_en_before_add32})
   );
 
   Control_Unit control_unit
