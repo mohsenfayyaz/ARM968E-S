@@ -47,7 +47,7 @@ module ID_Stage(
   //assign output_src2 = reg_src2;
   
   
-  assign cond = instruction[31:28];
+  //assign cond = instruction[31:28];
   assign mode = instruction[27:26];
   //assign imm = instruction[25];
   assign opcode = instruction[24:21];
@@ -77,22 +77,22 @@ module ID_Stage(
                 (exam_mode == `EXAM_MODE_POP && cycle_counter == 1'b1) ? 4'b1101 :
                 Rd;
   */
-  reg [3:0] ADD32_Rn, ADD32_Rd;
+  reg [3:0] ADD32_Rn, ADD32_Rd, cond_ADD32;
   
   assign Dest = (ADD32_STATE == 2'b10) ? ADD32_Rd : Rd;
   assign Rn = (ADD32_STATE == 2'b10) ? ADD32_Rn : instruction[19:16];
   wire [`ADDRESS_LEN - 1:0] Val_Rm;
   assign Val_Rm_After_ADD32 = (ADD32_STATE == 2'b10) ? instruction[31:0] : Val_Rm;
   
+  assign cond = (ADD32_STATE == 2'b10) ? cond_ADD32 : instruction[31:28];
   
   always @(posedge clk) begin
     if (ADD32_STATE == 2'b01) begin
       ADD32_Rn <= Rn;
       ADD32_Rd <= Rd;
-    end  
+      cond_ADD32 <= cond;
+    end
   end
-  
-  // END EXAM ----------
   
   //assign Shift_operand = instruction[11:0];
   //assign Signed_imm_24 = instruction[23:0];
@@ -101,19 +101,37 @@ module ID_Stage(
   
   wire wb_en_before_add32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, B_before_add32, S_before_add32;
   wire [3:0] EXE_CMD_BERFORE_ADD32;
+  /*
   assign EXE_CMD = (ADD32_STATE == 2'b10) ? 4'b0010 : EXE_CMD_BERFORE_ADD32;
   assign WB_EN = (ADD32_STATE == 2'b10) ? 1'b1 : wb_en_before_add32;
   assign MEM_W_EN = (ADD32_STATE == 2'b10) ? 1'b0 : MEM_W_EN_before_add32;
   assign MEM_R_EN = (ADD32_STATE == 2'b10) ? 1'b0 : MEM_R_EN_before_add32;
   assign B = (ADD32_STATE == 2'b10) ? 1'b0 : B_before_add32;
   assign S = (ADD32_STATE == 2'b10) ? 1'b0 : S_before_add32;
+  */
+  
+  assign S_before_add32 = (ADD32_STATE == 2'b10) ? 1'b0 : status_update;
+  assign B_before_add32 = (ADD32_STATE == 2'b10) ? 1'b0 : branch;
+  assign EXE_CMD_BERFORE_ADD32 = (ADD32_STATE == 2'b10) ? 4'b0010 : exe_cmd;  // ADD
+  assign MEM_W_EN_before_add32 = (ADD32_STATE == 2'b10) ? 1'b0 : mem_write;
+  assign MEM_R_EN_before_add32 = (ADD32_STATE == 2'b10) ? 1'b0 : mem_read;
+  assign wb_en_before_add32 = (ADD32_STATE == 2'b10) ? 1'b1 : wb_en;
+  
   Mux #(.WIDTH(9)) src1_mux
+  (
+    .first({S_before_add32, B_before_add32, EXE_CMD_BERFORE_ADD32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, wb_en_before_add32}),
+    .second(9'b0),
+    .select(control_unit_mux_select),
+    .out({S, B, EXE_CMD, MEM_W_EN, MEM_R_EN, WB_EN})
+  );
+  /*Mux #(.WIDTH(9)) src1_mux
   (
     .first({status_update, branch, exe_cmd, mem_write,  mem_read, wb_en}),
     .second(9'b0),
     .select(control_unit_mux_select),
     .out({S_before_add32, B_before_add32, EXE_CMD_BERFORE_ADD32, MEM_W_EN_before_add32, MEM_R_EN_before_add32, wb_en_before_add32})
-  );
+  );*/
+  // END EXAM ----------
 
   Control_Unit control_unit
   (
