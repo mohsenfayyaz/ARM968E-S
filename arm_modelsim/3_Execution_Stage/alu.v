@@ -70,7 +70,7 @@ module ALU(
           ALU_Res = Val1 % Val2;
         end
     endcase
-    //$display("Mohsen: ALU %d,%d,%d = %d,%d", Val1, Val2, C_in, ALU_Res, C);
+    //$display("Mohsen: ALU %d,%d,%d = %d,%d,%b", Val1, Val2, C_in, ALU_Res, C, EXE_CMD);
   end
 
 endmodule
