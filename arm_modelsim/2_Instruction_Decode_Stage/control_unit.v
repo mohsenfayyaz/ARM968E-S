@@ -1,3 +1,5 @@
+`include "configs.v"
+
 module Control_Unit
 (
     input [1:0] mode,
@@ -10,7 +12,9 @@ module Control_Unit
     // EXAM
     input clk, rst, hazard,
     output reg cycle_freeze,
-    output cycle_counter
+    output reg [1:0] ADD32_STATE,
+    output cycle_counter,
+    output reg [1:0] exam_mode
 );
   
   wire p_cycle;
@@ -19,9 +23,16 @@ module Control_Unit
   Regular_Register #(.SIZE(1)) cycle_reg(.q(p_cycle), .d(n_cycle), .clk(clk), .rst(rst));
   
   always @(*) begin
-    {exe_cmd, mem_read, mem_write, wb_en, branch, n_cycle, cycle_freeze} = 0;
+    {exe_cmd, mem_read, mem_write, wb_en, branch, n_cycle, cycle_freeze, exam_mode, ADD32_STATE} = 0;
+    if(p_cycle == 1'b1) begin
+      $display("Mohsen HI2");
+      exe_cmd = 4'b0010; // ADD
+      n_cycle = 1'b0;
+      ADD32_STATE = 2'b10;
+      //cycle_freeze = 1'b0;
+      wb_en = 1'b1;
+    end
     case(mode)
-      
         2'b00: begin  // Arithmetic
                 case (opcode)
                     4'b1101: begin //MOV
@@ -67,7 +78,9 @@ module Control_Unit
                         exe_cmd = 4'b0110;
                     end
                     // MUL -------------- NEW
+                    /*
                     4'b0011: begin  // MUL1
+                      exam_mode = `EXAM_MODE_MUL_DIV;
                       if(p_cycle == 1'b0) begin
                         exe_cmd = 4'b1100;
                         if(~hazard) begin
@@ -84,6 +97,20 @@ module Control_Unit
                         wb_en = 1'b1;
                       end
                     end
+                    */
+                    
+                    // ADD32
+                    4'b0011: begin
+                      if(p_cycle == 1'b0) begin
+                        if(~hazard) begin
+                          $display("Mohsen HI");
+                          n_cycle = 1'b1;
+                          ADD32_STATE = 2'b01;
+                          wb_en = 1'b0;
+                        end
+                      end
+                    end
+                    
                     default: begin
                         exe_cmd = 4'b0000;
                     end
@@ -97,6 +124,26 @@ module Control_Unit
             end else begin //STR
                 mem_write = 1'b1;      
             end
+        end
+        // ----------- PUSH
+        4'b1111: begin
+          if (status == 1'b0) begin // PUSH
+            if(p_cycle == 1'b0 && ~hazard) begin
+              exam_mode = `EXAM_MODE_PUSH;
+              n_cycle = 1'b1;
+              cycle_freeze = 1'b1;
+              wb_en = 1'b1;
+            end
+            else if(p_cycle == 1'b1 && ~hazard) begin
+              mem_write = 1'b1;
+            end
+          end
+          if (status == 1'b1) begin // POP
+            exam_mode = `EXAM_MODE_POP;
+            {mem_read, wb_en} = 2'b11;
+            
+          end
+                   
         end
         
         2'b10: begin  // Branch

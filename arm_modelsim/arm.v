@@ -123,7 +123,10 @@ module ARM(input clk, rst,
     
     .BEFORE_MUX_EXE_CMD(bonus_EXE_CMD),
     
-    .Val_Rn(g_Val_Rn), .Val_Rm(g_Val_Rm),
+    .Val_Rn(g_Val_Rn), 
+    //.Val_Rm(g_Val_Rm),
+    //EXAM
+    .Val_Rm_After_ADD32(g_Val_Rm),
     .imm(g_imm),
     .Signed_imm_24(g_Signed_imm_24),
     .Dest(g_Dest), 
